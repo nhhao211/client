@@ -14,6 +14,9 @@ export function AnimatedBackground() {
 
     let animationFrameId: number;
     
+    // Check if dark mode
+    const isDark = document.documentElement.classList.contains('dark');
+    
     // Set canvas size
     const resizeCanvas = () => {
       canvas.width = window.innerWidth;
@@ -36,11 +39,12 @@ export function AnimatedBackground() {
         if (!canvas) return;
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
-        this.size = Math.random() * 100 + 50;
-        this.speedX = Math.random() * 0.5 - 0.25;
-        this.speedY = Math.random() * 0.5 - 0.25;
-        // Modern Blue/Cyan palette: Navy, Sky Blue, Cyan, Teal
-        const hues = [220, 200, 190, 180];
+        this.size = Math.random() * 80 + 40;
+        this.speedX = Math.random() * 0.3 - 0.15;
+        this.speedY = Math.random() * 0.3 - 0.15;
+        // Neutral palette for light mode, cool for dark mode
+        const isDark = document.documentElement.classList.contains('dark');
+        const hues = isDark ? [220, 200, 190, 180] : [220, 210, 200, 195]; // Neutral: blue-gray tones
         this.hue = hues[Math.floor(Math.random() * hues.length)];
       }
 
@@ -57,6 +61,9 @@ export function AnimatedBackground() {
 
       draw() {
         if (!ctx) return;
+        const isDark = document.documentElement.classList.contains('dark');
+        const opacity = isDark ? 0.15 : 0.06; // Reduced opacity for light mode
+        
         const gradient = ctx.createRadialGradient(
           this.x,
           this.y,
@@ -66,9 +73,10 @@ export function AnimatedBackground() {
           this.size
         );
         
-        gradient.addColorStop(0, `hsla(${this.hue}, 100%, 60%, 0.25)`);
-        gradient.addColorStop(0.5, `hsla(${this.hue}, 100%, 50%, 0.15)`);
-        gradient.addColorStop(1, `hsla(${this.hue}, 100%, 50%, 0)`);
+        // Warmer, softer colors for light mode
+        gradient.addColorStop(0, `hsla(${this.hue}, ${isDark ? '70%' : '40%'}, ${isDark ? '60%' : '55%'}, ${opacity})`);
+        gradient.addColorStop(0.5, `hsla(${this.hue}, ${isDark ? '70%' : '40%'}, ${isDark ? '50%' : '50%'}, ${opacity * 0.6})`);
+        gradient.addColorStop(1, `hsla(${this.hue}, ${isDark ? '70%' : '40%'}, ${isDark ? '50%' : '50%'}, 0)`);
 
         ctx.fillStyle = gradient;
         ctx.beginPath();
@@ -77,9 +85,9 @@ export function AnimatedBackground() {
       }
     }
 
-    // Create particles
+    // Create particles - fewer for better performance
     const particlesArray: Particle[] = [];
-    const numberOfParticles = 6;
+    const numberOfParticles = 4;
 
     for (let i = 0; i < numberOfParticles; i++) {
       particlesArray.push(new Particle());
@@ -112,7 +120,7 @@ export function AnimatedBackground() {
       ref={canvasRef}
       className="fixed inset-0 -z-10 pointer-events-none"
       style={{
-        background: 'linear-gradient(135deg, hsl(215, 80%, 4%) 0%, hsl(220, 75%, 8%) 50%, hsl(200, 70%, 6%) 100%)'
+        background: 'transparent',
       }}
     />
   );

@@ -45,7 +45,7 @@ export function Header({ title = "Dashboard" }: HeaderProps) {
       .substring(0, 2);
   };
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-blue-500/10 dark:border-blue-400/10 bg-white/70 dark:bg-slate-950/70 backdrop-blur-2xl px-6 supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-slate-950/60 lg:px-6">
+    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-gray-200 dark:border-white/10 bg-white/90 dark:bg-slate-950/80 backdrop-blur-xl px-6 supports-[backdrop-filter]:bg-white/85 dark:supports-[backdrop-filter]:bg-slate-950/70 lg:px-6 transition-colors duration-200">
       {/* Subtle gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-r from-blue-500/[0.02] via-transparent to-cyan-500/[0.02] pointer-events-none" />
       
@@ -72,14 +72,14 @@ export function Header({ title = "Dashboard" }: HeaderProps) {
       {/* Actions */}
       <div className="relative flex items-center gap-2">
         {/* Search */}
-        <Button variant="ghost" size="icon" className="hidden cursor-pointer sm:flex hover:bg-blue-500/10 transition-colors group">
-          <Search className="h-4 w-4 group-hover:text-blue-500 transition-colors" />
+        <Button variant="ghost" size="icon" className="hidden cursor-pointer sm:flex hover:bg-gray-100 dark:hover:bg-white/10 transition-colors duration-200 group">
+          <Search className="h-4 w-4 text-gray-600 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
           <span className="sr-only">Search</span>
         </Button>
 
         {/* Notifications */}
-        <Button variant="ghost" size="icon" className="cursor-pointer hover:bg-blue-500/10 transition-colors group relative">
-          <Bell className="h-4 w-4 group-hover:text-blue-500 transition-colors" />
+        <Button variant="ghost" size="icon" className="cursor-pointer hover:bg-gray-100 dark:hover:bg-white/10 transition-colors duration-200 group relative">
+          <Bell className="h-4 w-4 text-gray-600 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
           {/* Notification dot */}
           <span className="absolute top-2 right-2 w-2 h-2 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full ring-2 ring-background" />
           <span className="sr-only">Notifications</span>
@@ -91,7 +91,7 @@ export function Header({ title = "Dashboard" }: HeaderProps) {
         {/* User Menu */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="relative h-9 w-9 rounded-full cursor-pointer ring-2 ring-blue-500/20 hover:ring-blue-500/40 transition-all">
+            <Button variant="ghost" className="relative h-9 w-9 rounded-full cursor-pointer ring-2 ring-gray-200 dark:ring-white/20 hover:ring-blue-500/40 dark:hover:ring-blue-500/40 transition-all duration-200">
               <Avatar className="h-9 w-9">
                 <AvatarImage src={user?.picture || undefined} alt={user?.name || "User"} />
                 <AvatarFallback className="bg-gradient-to-br from-blue-500 to-cyan-500 text-white text-sm font-medium">
@@ -100,7 +100,7 @@ export function Header({ title = "Dashboard" }: HeaderProps) {
               </Avatar>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56 border-blue-500/10 bg-background/95 backdrop-blur-xl" align="end" forceMount>
+          <DropdownMenuContent className="w-56 border-gray-200 dark:border-white/10 bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl" align="end" forceMount>
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
                 <p className="text-sm font-medium leading-none">{user?.name || "Guest User"}</p>
@@ -109,10 +109,10 @@ export function Header({ title = "Dashboard" }: HeaderProps) {
                 </p>
               </div>
             </DropdownMenuLabel>
-            <DropdownMenuSeparator className="bg-blue-500/10" />
-            <DropdownMenuItem className="cursor-pointer hover:bg-blue-500/10 focus:bg-blue-500/10 transition-colors">Profile</DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer hover:bg-blue-500/10 focus:bg-blue-500/10 transition-colors">Settings</DropdownMenuItem>
-            <DropdownMenuSeparator className="bg-blue-500/10" />
+            <DropdownMenuSeparator className="bg-gray-200 dark:bg-white/10" />
+            <DropdownMenuItem className="cursor-pointer hover:bg-gray-100 dark:hover:bg-white/10 focus:bg-gray-100 dark:focus:bg-white/10 transition-colors duration-200">Profile</DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer hover:bg-gray-100 dark:hover:bg-white/10 focus:bg-gray-100 dark:focus:bg-white/10 transition-colors duration-200">Settings</DropdownMenuItem>
+            <DropdownMenuSeparator className="bg-gray-200 dark:bg-white/10" />
             <DropdownMenuItem 
               className="cursor-pointer text-destructive hover:bg-destructive/10 focus:bg-destructive/10 transition-colors"
               onClick={handleLogout}

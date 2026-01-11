@@ -163,10 +163,10 @@ export default function ProjectsPage() {
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger asChild>
             <Button 
-              className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-black/5 border border-white/10 transition-all font-medium cursor-pointer"
+              className="cursor-pointer bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:from-blue-700 hover:to-cyan-600 transition-all duration-200 font-medium shadow-md hover:shadow-lg"
             >
-              <Plus className="w-4 h-4 mr-2" />
-              New Project
+              <Plus className="mr-2 h-4 w-4" />
+              <span className="font-semibold">New Project</span>
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-md">

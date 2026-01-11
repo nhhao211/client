@@ -55,23 +55,23 @@ export function Sidebar({ isMobile }: SidebarProps) {
 
   return (
     <aside className={cn(
-      "flex h-screen flex-col border-r border-blue-500/10 dark:border-blue-400/10 bg-white/80 dark:bg-slate-950/80 backdrop-blur-2xl transition-all duration-300 shadow-xl",
+      "flex h-screen flex-col border-r border-gray-200 dark:border-white/10 bg-white/90 dark:bg-slate-950/80 backdrop-blur-xl transition-all duration-200 shadow-sm",
       isMobile ? "w-full" : "fixed left-0 top-0 z-40 w-16 lg:w-64"
     )}>
       {/* Decorative gradient glow */}
-      <div className="absolute inset-0 bg-gradient-to-b from-blue-500/5 via-transparent to-cyan-500/5 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-blue-500/3 via-transparent to-cyan-500/3 pointer-events-none" />
       
       {/* Logo */}
-      <div className="relative flex h-16 items-center justify-start px-4 border-b border-blue-500/10 dark:border-blue-400/10">
+      <div className="relative flex h-16 items-center justify-start px-4 border-b border-gray-200 dark:border-white/10">
         <Link
           href="/dashboard"
           className="flex items-center gap-3 cursor-pointer group"
         >
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/25 transition-all duration-300 group-hover:scale-105 group-hover:shadow-blue-500/40 shrink-0">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 text-white shadow-md transition-all duration-200 group-hover:shadow-lg shrink-0">
             <Sparkles className="h-5 w-5 fill-current" />
           </div>
-          <span className={cn("text-xl font-bold font-heading text-foreground tracking-tight bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent", isMobile ? "block" : "hidden lg:block")}>
-            MarkFlow
+          <span className={cn("text-xl font-bold font-heading text-gray-900 dark:text-gray-100 tracking-tight", isMobile ? "block" : "hidden lg:block")}>
+            MemMart
           </span>
         </Link>
       </div>
@@ -84,7 +84,7 @@ export function Sidebar({ isMobile }: SidebarProps) {
               <Button
                 asChild
                 className={cn(
-                  "w-full cursor-pointer bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:from-blue-700 hover:to-cyan-600 transition-all font-medium border border-white/20 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/35",
+                  "w-full cursor-pointer bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:from-blue-700 hover:to-cyan-600 transition-all duration-200 font-medium shadow-md hover:shadow-lg",
                   isMobile ? "justify-start px-4" : "justify-center lg:justify-start"
                 )}
               >
@@ -103,7 +103,7 @@ export function Sidebar({ isMobile }: SidebarProps) {
         </TooltipProvider>
       </div>
 
-      <Separator className="bg-blue-500/10 dark:bg-blue-400/10" />
+      <Separator className="bg-gray-200 dark:bg-white/10" />
 
       {/* Main Navigation */}
       <nav className="relative flex-1 space-y-1 p-3">
@@ -119,17 +119,17 @@ export function Sidebar({ isMobile }: SidebarProps) {
                       "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 cursor-pointer group",
                       isMobile ? "justify-start" : "justify-center lg:justify-start",
                       isActive
-                        ? "bg-gradient-to-r from-blue-500/15 to-cyan-500/10 text-blue-600 dark:text-blue-400 shadow-sm ring-1 ring-blue-500/25"
-                        : "text-muted-foreground hover:bg-blue-500/5 dark:hover:bg-blue-500/10 hover:text-foreground"
+                        ? "bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 shadow-sm"
+                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 hover:text-gray-900 dark:hover:text-white transition-colors duration-200"
                     )}
                   >
                     <item.icon className={cn(
-                      "h-5 w-5 shrink-0 transition-colors",
-                      isActive ? "text-blue-500" : "group-hover:text-blue-500"
+                      "h-5 w-5 shrink-0 transition-colors duration-200",
+                      isActive ? "text-blue-600 dark:text-blue-400" : "text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400"
                     )} />
                     <span className={cn(isMobile ? "block" : "hidden lg:inline-block")}>{item.title}</span>
                     {isActive && (
-                      <div className="absolute left-0 w-1 h-6 bg-gradient-to-b from-blue-500 to-cyan-500 rounded-r-full" />
+                      <div className="absolute left-0 w-1 h-6 bg-blue-600 dark:bg-blue-400 rounded-r-full" />
                     )}
                   </Link>
                 </TooltipTrigger>
@@ -143,7 +143,7 @@ export function Sidebar({ isMobile }: SidebarProps) {
       </nav>
 
       {/* Bottom Navigation */}
-      <div className="relative border-t border-blue-500/10 dark:border-blue-400/10 p-3">
+      <div className="relative border-t border-gray-200 dark:border-white/10 p-3">
         <TooltipProvider>
           {bottomNavItems.map((item) => {
             const isActive = pathname === item.href;
@@ -156,13 +156,13 @@ export function Sidebar({ isMobile }: SidebarProps) {
                       "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 cursor-pointer group",
                       isMobile ? "justify-start" : "justify-center lg:justify-start",
                       isActive
-                        ? "bg-gradient-to-r from-blue-500/15 to-cyan-500/10 text-blue-600 dark:text-blue-400 shadow-sm ring-1 ring-blue-500/25"
-                        : "text-muted-foreground hover:bg-blue-500/5 dark:hover:bg-blue-500/10 hover:text-foreground"
+                        ? "bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 shadow-sm"
+                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 hover:text-gray-900 dark:hover:text-white transition-colors duration-200"
                     )}
                   >
                     <item.icon className={cn(
-                      "h-5 w-5 shrink-0 transition-colors",
-                      isActive ? "text-blue-500" : "group-hover:text-blue-500"
+                      "h-5 w-5 shrink-0 transition-colors duration-200",
+                      isActive ? "text-blue-600 dark:text-blue-400" : "text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400"
                     )} />
                     <span className={cn(isMobile ? "block" : "hidden lg:inline-block")}>{item.title}</span>
                   </Link>

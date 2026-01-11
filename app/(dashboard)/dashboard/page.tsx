@@ -91,9 +91,42 @@ export default function DashboardPage() {
   const draftCount = documents.filter((doc) => doc.status === "draft").length;
   
   const stats = [
-    { label: "Total Documents", value: documents.length.toString(), icon: FileText, color: "text-blue-500", bg: "bg-blue-500/10", border: "border-blue-500/20", glow: "from-blue-500/20" },
-    { label: "Favorites", value: favoriteCount.toString(), icon: Star, color: "text-amber-500", bg: "bg-amber-500/10", border: "border-amber-500/20", glow: "from-amber-500/20" },
-    { label: "Drafts", value: draftCount.toString(), icon: TrendingUp, color: "text-cyan-500", bg: "bg-cyan-500/10", border: "border-cyan-500/20", glow: "from-cyan-500/20" },
+    { 
+      label: "Total Documents", 
+      value: documents.length.toString(), 
+      icon: FileText, 
+      color: "text-sky-500 dark:text-sky-400", 
+      valueColor: "text-sky-600 dark:text-sky-300",
+      bg: "bg-sky-500/15", 
+      border: "border-sky-500/30", 
+      glow: "from-sky-500/20",
+      cardBg: "bg-gradient-to-br from-sky-50/95 to-sky-100/70 dark:from-sky-950/50 dark:to-sky-900/40",
+      cardBorder: "border-sky-200/90 dark:border-sky-500/50"
+    },
+    { 
+      label: "Favorites", 
+      value: favoriteCount.toString(), 
+      icon: Star, 
+      color: "text-orange-500 dark:text-orange-400", 
+      valueColor: "text-orange-600 dark:text-orange-300",
+      bg: "bg-orange-500/15", 
+      border: "border-orange-500/30", 
+      glow: "from-orange-500/20",
+      cardBg: "bg-gradient-to-br from-orange-50/95 to-orange-100/70 dark:from-orange-950/50 dark:to-orange-900/40",
+      cardBorder: "border-orange-200/90 dark:border-orange-500/50"
+    },
+    { 
+      label: "Drafts", 
+      value: draftCount.toString(), 
+      icon: TrendingUp, 
+      color: "text-emerald-500 dark:text-emerald-400", 
+      valueColor: "text-emerald-600 dark:text-emerald-300",
+      bg: "bg-emerald-500/15", 
+      border: "border-emerald-500/30", 
+      glow: "from-emerald-500/20",
+      cardBg: "bg-gradient-to-br from-emerald-50/95 to-emerald-100/70 dark:from-emerald-950/50 dark:to-emerald-900/40",
+      cardBorder: "border-emerald-200/90 dark:border-emerald-500/50"
+    },
   ];
 
   return (
@@ -109,16 +142,16 @@ export default function DashboardPage() {
           className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
         >
           <div>
-            <h2 className="text-4xl font-bold tracking-tight text-foreground bg-gradient-to-r from-blue-400 via-cyan-400 to-sky-400 bg-clip-text text-transparent">
+            <h2 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
               Dashboard
             </h2>
-            <p className="text-muted-foreground mt-2 text-lg">
+            <p className="text-gray-600 dark:text-gray-300 mt-2 text-lg">
               Welcome back to your workspace.
             </p>
           </div>
           <Button 
               asChild
-              className="cursor-pointer bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:from-blue-700 hover:to-cyan-600 transition-all font-medium border border-white/10 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40"
+              className="cursor-pointer bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:from-blue-700 hover:to-cyan-600 transition-all duration-200 font-medium shadow-md hover:shadow-lg"
           >
             <Link href="/editor/new">
               <Plus className="mr-2 h-4 w-4" />
@@ -136,18 +169,16 @@ export default function DashboardPage() {
         >
           {stats.map((stat) => (
             <motion.div key={stat.label} variants={item}>
-              <GlassCard className={`lg:col-span-1 p-6 relative overflow-hidden bg-gradient-to-br ${stat.glow} to-transparent backdrop-blur-xl ${stat.border} group hover:scale-[1.02] transition-all duration-300 shadow-lg hover:shadow-xl`}>
+              <GlassCard className={`lg:col-span-1 p-6 relative overflow-hidden group transition-all duration-200 ${stat.cardBg} ${stat.cardBorder}`}>
                   <div className="flex items-start justify-between relative z-10">
                       <div>
-                          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mb-2">{stat.label}</p>
-                          <p className="text-4xl font-bold tracking-tight">{stat.value}</p>
+                          <p className="text-sm font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-widest mb-2">{stat.label}</p>
+                          <p className={`text-4xl font-bold tracking-tight ${stat.valueColor}`}>{stat.value}</p>
                       </div>
-                      <div className={`flex h-12 w-12 items-center justify-center rounded-xl shadow-inner ${stat.bg} group-hover:scale-110 transition-transform duration-300`}>
+                      <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${stat.bg} group-hover:opacity-80 transition-opacity duration-200`}>
                           <stat.icon className={`h-6 w-6 ${stat.color}`} />
                       </div>
                   </div>
-                  {/* Decorative blob with specific color */}
-                  <div className={`absolute -right-6 -bottom-6 w-24 h-24 rounded-full opacity-20 blur-2xl ${stat.bg.replace('/10', '')} group-hover:opacity-30 transition-opacity duration-300`} />
               </GlassCard>
             </motion.div>
           ))}
@@ -155,8 +186,8 @@ export default function DashboardPage() {
 
       {/* Error State */}
       {error && (
-        <GlassCard className="border-red-500/20 bg-red-500/5">
-            <div className="flex items-start gap-3 text-red-500">
+        <GlassCard className="border-red-200 dark:border-red-500/20 bg-red-50 dark:bg-red-500/5">
+            <div className="flex items-start gap-3 text-red-600 dark:text-red-400">
                 <AlertCircle className="h-5 w-5 mt-0.5" />
                 <div>
                     <h3 className="font-semibold">Error</h3>
@@ -169,17 +200,17 @@ export default function DashboardPage() {
       {/* Recent Documents Section */}
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-            <h3 className="text-xl font-bold flex items-center gap-2">
-                <Clock className="h-5 w-5 text-muted-foreground" />
+            <h3 className="text-xl font-bold flex items-center gap-2 text-gray-900 dark:text-white">
+                <Clock className="h-5 w-5 text-gray-600 dark:text-gray-300" />
                 Recent Activity
             </h3>
             {documents.length > 0 && (
                 <Link
                 href="/documents"
-                className="group flex items-center gap-1 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+                className="group flex items-center gap-1 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors duration-200 cursor-pointer"
                 >
                 View all
-                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
                 </Link>
             )}
         </div>
@@ -191,15 +222,15 @@ export default function DashboardPage() {
                 ))}
             </div>
         ) : documents.length === 0 ? (
-            <GlassCard className="flex flex-col items-center justify-center p-12 text-center border-dashed border-2 bg-transparent">
-                <div className="w-16 h-16 bg-muted/50 rounded-full flex items-center justify-center mb-4">
-                    <FileText className="h-8 w-8 text-muted-foreground" />
+            <GlassCard className="flex flex-col items-center justify-center p-12 text-center border-dashed border-2 border-gray-300 dark:border-white/20">
+                <div className="w-16 h-16 bg-gray-100 dark:bg-white/10 rounded-full flex items-center justify-center mb-4">
+                    <FileText className="h-8 w-8 text-gray-400 dark:text-gray-500" />
                 </div>
-                <h3 className="text-lg font-semibold mb-2">No documents yet</h3>
-                <p className="text-muted-foreground mb-6 max-w-sm">
+                <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">No documents yet</h3>
+                <p className="text-gray-600 dark:text-gray-300 mb-6 max-w-sm">
                     Your workspace is looking a bit empty. Create your first document to get started!
                 </p>
-                <Button asChild>
+                <Button asChild className="cursor-pointer">
                     <Link href="/editor/new">
                         <Plus className="mr-2 h-4 w-4" />
                         Create First Document
