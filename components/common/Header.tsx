@@ -45,38 +45,43 @@ export function Header({ title = "Dashboard" }: HeaderProps) {
       .substring(0, 2);
   };
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 bg-background/50 backdrop-blur-3xl px-6 supports-[backdrop-filter]:bg-background/60 lg:px-6">
+    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-blue-500/10 dark:border-blue-400/10 bg-white/70 dark:bg-slate-950/70 backdrop-blur-2xl px-6 supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-slate-950/60 lg:px-6">
+      {/* Subtle gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-r from-blue-500/[0.02] via-transparent to-cyan-500/[0.02] pointer-events-none" />
+      
       {/* Mobile Menu */}
       <Sheet>
         <SheetTrigger asChild>
-          <Button variant="ghost" size="icon" className="lg:hidden cursor-pointer">
+          <Button variant="ghost" size="icon" className="lg:hidden cursor-pointer hover:bg-blue-500/10 transition-colors">
             <Menu className="h-5 w-5" />
             <span className="sr-only">Toggle menu</span>
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="p-0 w-64">
+        <SheetContent side="left" className="p-0 w-64 border-r border-blue-500/10">
           <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
           <Sidebar isMobile />
         </SheetContent>
       </Sheet>
 
       {/* Page Title */}
-      <h1 className="text-lg font-semibold font-heading lg:text-xl">{title}</h1>
+      <h1 className="relative text-lg font-semibold font-heading lg:text-xl bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text">{title}</h1>
 
       {/* Spacer */}
       <div className="flex-1" />
 
       {/* Actions */}
-      <div className="flex items-center gap-2">
+      <div className="relative flex items-center gap-2">
         {/* Search */}
-        <Button variant="ghost" size="icon" className="hidden cursor-pointer sm:flex">
-          <Search className="h-4 w-4" />
+        <Button variant="ghost" size="icon" className="hidden cursor-pointer sm:flex hover:bg-blue-500/10 transition-colors group">
+          <Search className="h-4 w-4 group-hover:text-blue-500 transition-colors" />
           <span className="sr-only">Search</span>
         </Button>
 
         {/* Notifications */}
-        <Button variant="ghost" size="icon" className="cursor-pointer">
-          <Bell className="h-4 w-4" />
+        <Button variant="ghost" size="icon" className="cursor-pointer hover:bg-blue-500/10 transition-colors group relative">
+          <Bell className="h-4 w-4 group-hover:text-blue-500 transition-colors" />
+          {/* Notification dot */}
+          <span className="absolute top-2 right-2 w-2 h-2 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full ring-2 ring-background" />
           <span className="sr-only">Notifications</span>
         </Button>
 
@@ -86,16 +91,16 @@ export function Header({ title = "Dashboard" }: HeaderProps) {
         {/* User Menu */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="relative h-9 w-9 rounded-full cursor-pointer">
+            <Button variant="ghost" className="relative h-9 w-9 rounded-full cursor-pointer ring-2 ring-blue-500/20 hover:ring-blue-500/40 transition-all">
               <Avatar className="h-9 w-9">
                 <AvatarImage src={user?.picture || undefined} alt={user?.name || "User"} />
-                <AvatarFallback className="bg-primary text-primary-foreground text-sm">
+                <AvatarFallback className="bg-gradient-to-br from-blue-500 to-cyan-500 text-white text-sm font-medium">
                   {user?.name ? getInitials(user.name) : "U"}
                 </AvatarFallback>
               </Avatar>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56" align="end" forceMount>
+          <DropdownMenuContent className="w-56 border-blue-500/10 bg-background/95 backdrop-blur-xl" align="end" forceMount>
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
                 <p className="text-sm font-medium leading-none">{user?.name || "Guest User"}</p>
@@ -104,12 +109,12 @@ export function Header({ title = "Dashboard" }: HeaderProps) {
                 </p>
               </div>
             </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="cursor-pointer">Profile</DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer">Settings</DropdownMenuItem>
-            <DropdownMenuSeparator />
+            <DropdownMenuSeparator className="bg-blue-500/10" />
+            <DropdownMenuItem className="cursor-pointer hover:bg-blue-500/10 focus:bg-blue-500/10 transition-colors">Profile</DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer hover:bg-blue-500/10 focus:bg-blue-500/10 transition-colors">Settings</DropdownMenuItem>
+            <DropdownMenuSeparator className="bg-blue-500/10" />
             <DropdownMenuItem 
-              className="cursor-pointer text-destructive"
+              className="cursor-pointer text-destructive hover:bg-destructive/10 focus:bg-destructive/10 transition-colors"
               onClick={handleLogout}
             >
               Log out

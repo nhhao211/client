@@ -23,13 +23,13 @@ interface DocumentCardProps {
 export function DocumentCard({ doc, onDelete, onToggleFavorite }: DocumentCardProps) {
   return (
     <Link href={`/editor/${doc.id}`} passHref>
-      <GlassCard className="h-full flex flex-col justify-between group cursor-pointer hover:border-blue-500/50 transition-all duration-300">
+      <GlassCard className="h-full flex flex-col justify-between group cursor-pointer hover:border-blue-500/40 dark:hover:border-blue-400/40 transition-all duration-300">
         <div className="space-y-4">
           <div className="flex items-start justify-between">
             <div className={cn(
                 "p-2 rounded-lg transition-colors",
                 doc.isFavorite 
-                    ? "bg-yellow-500/10 text-yellow-500" 
+                    ? "bg-amber-500/10 text-amber-500" 
                     : "bg-blue-500/10 text-blue-500 group-hover:bg-blue-500/20"
             )}>
               {doc.isFavorite ? <Star className="w-6 h-6 fill-current" /> : <FileText className="w-6 h-6" />}
@@ -37,19 +37,23 @@ export function DocumentCard({ doc, onDelete, onToggleFavorite }: DocumentCardPr
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-blue-500/10 transition-colors">
                   <MoreVertical className="w-4 h-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-40 backdrop-blur-xl bg-white/80 dark:bg-black/80">
-                <DropdownMenuItem onClick={(e) => {
+              <DropdownMenuContent align="end" className="w-40 backdrop-blur-xl bg-white/90 dark:bg-slate-950/90 border-blue-500/15">
+                <DropdownMenuItem 
+                  className="cursor-pointer hover:bg-blue-500/10 focus:bg-blue-500/10 transition-colors"
+                  onClick={(e) => {
                     e.stopPropagation();
                     onToggleFavorite?.(doc.id);
                 }}>
                   {doc.isFavorite ? "Unfavorite" : "Favorite"}
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={(e) => {
+                <DropdownMenuSeparator className="bg-blue-500/10" />
+                <DropdownMenuItem 
+                  className="text-destructive focus:text-destructive cursor-pointer hover:bg-destructive/10 focus:bg-destructive/10 transition-colors" 
+                  onClick={(e) => {
                     e.stopPropagation();
                     onDelete?.(doc.id);
                 }}>
@@ -71,7 +75,7 @@ export function DocumentCard({ doc, onDelete, onToggleFavorite }: DocumentCardPr
           </div>
         </div>
 
-        <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-muted-foreground">
+        <div className="mt-4 pt-4 border-t border-blue-500/10 dark:border-blue-400/10 flex items-center justify-between text-xs text-muted-foreground">
             <div className="flex items-center gap-1.5">
                 <Calendar className="w-3.5 h-3.5" />
                 <span>{new Date(doc.createdAt).toLocaleDateString()}</span>
