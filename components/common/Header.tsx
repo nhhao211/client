@@ -16,6 +16,7 @@ import {
   Sheet,
   SheetContent,
   SheetTrigger,
+  SheetTitle,
 } from "@/components/ui/sheet";
 import { ThemeToggle } from "./ThemeToggle";
 import { Sidebar } from "./Sidebar";
@@ -44,7 +45,7 @@ export function Header({ title = "Dashboard" }: HeaderProps) {
       .substring(0, 2);
   };
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-border bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/60 lg:px-6">
+    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 bg-background/50 backdrop-blur-3xl px-6 supports-[backdrop-filter]:bg-background/60 lg:px-6">
       {/* Mobile Menu */}
       <Sheet>
         <SheetTrigger asChild>
@@ -54,7 +55,8 @@ export function Header({ title = "Dashboard" }: HeaderProps) {
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="p-0 w-64">
-          <Sidebar />
+          <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+          <Sidebar isMobile />
         </SheetContent>
       </Sheet>
 

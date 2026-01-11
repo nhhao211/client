@@ -65,7 +65,7 @@ export function Toolbar({
   };
 
   return (
-    <div className="flex items-center gap-1 border-b border-border bg-muted/30 px-2 py-1.5">
+    <div className="flex items-center gap-1 px-2 py-2">
       <TooltipProvider>
         {/* Format buttons */}
         {formatButtons.map((button) => (

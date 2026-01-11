@@ -28,12 +28,12 @@ const mainNavItems = [
   },
   {
     title: "Documents",
-    href: "/dashboard/documents",
+    href: "/documents",
     icon: FileText,
   },
   {
     title: "Projects",
-    href: "/dashboard/projects",
+    href: "/projects",
     icon: FolderOpen,
   },
 ];
@@ -46,21 +46,28 @@ const bottomNavItems = [
   },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+  isMobile?: boolean;
+}
+
+export function Sidebar({ isMobile }: SidebarProps) {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed left-0 top-0 z-40 flex h-screen w-16 flex-col border-r border-border bg-sidebar transition-all duration-200 lg:w-64">
+    <aside className={cn(
+      "flex h-screen flex-col border-r border-white/20 dark:border-white/10 bg-white/60 dark:bg-black/40 backdrop-blur-xl transition-all duration-300 shadow-xl",
+      isMobile ? "w-full" : "fixed left-0 top-0 z-40 w-16 lg:w-64"
+    )}>
       {/* Logo */}
-      <div className="flex h-16 items-center justify-center border-b border-border px-4 lg:justify-start">
+      <div className="flex h-16 items-center justify-start px-4 border-b border-white/20 dark:border-white/10">
         <Link
           href="/dashboard"
-          className="flex items-center gap-2 cursor-pointer"
+          className="flex items-center gap-3 cursor-pointer group"
         >
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-            <Sparkles className="h-4 w-4 text-primary-foreground" />
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white text-black shadow-lg shadow-white/10 transition-transform group-hover:scale-105 shrink-0">
+            <Sparkles className="h-5 w-5 fill-current" />
           </div>
-          <span className="hidden text-lg font-semibold lg:inline-block font-heading">
+          <span className={cn("text-xl font-bold font-heading text-foreground tracking-tight", isMobile ? "block" : "hidden lg:block")}>
             MarkFlow
           </span>
         </Link>
@@ -73,11 +80,14 @@ export function Sidebar() {
             <TooltipTrigger asChild>
               <Button
                 asChild
-                className="w-full cursor-pointer justify-center lg:justify-start"
+                className={cn(
+                  "w-full cursor-pointer bg-primary text-primary-foreground hover:bg-primary/90 transition-all font-medium border border-white/10",
+                  isMobile ? "justify-start px-4" : "justify-center lg:justify-start"
+                )}
               >
                 <Link href="/editor/new">
                   <Plus className="h-4 w-4" />
-                  <span className="hidden lg:inline-block ml-2">
+                  <span className={cn("inline-block ml-2 font-semibold", isMobile ? "block" : "hidden lg:inline-block")}>
                     New Document
                   </span>
                 </Link>
@@ -103,14 +113,15 @@ export function Sidebar() {
                   <Link
                     href={item.href}
                     className={cn(
-                      "flex items-center justify-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors duration-200 cursor-pointer lg:justify-start",
+                      "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 cursor-pointer",
+                      isMobile ? "justify-start" : "justify-center lg:justify-start",
                       isActive
-                        ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                        : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
+                        ? "bg-blue-500/10 text-blue-600 dark:text-blue-400 shadow-sm ring-1 ring-blue-500/20"
+                        : "text-muted-foreground hover:bg-white/40 dark:hover:bg-white/10 hover:text-foreground"
                     )}
                   >
                     <item.icon className="h-5 w-5 shrink-0" />
-                    <span className="hidden lg:inline-block">{item.title}</span>
+                    <span className={cn(isMobile ? "block" : "hidden lg:inline-block")}>{item.title}</span>
                   </Link>
                 </TooltipTrigger>
                 <TooltipContent side="right" className="lg:hidden">
@@ -123,7 +134,7 @@ export function Sidebar() {
       </nav>
 
       {/* Bottom Navigation */}
-      <div className="border-t border-border p-3">
+      <div className="border-t border-white/20 dark:border-white/10 p-3">
         <TooltipProvider>
           {bottomNavItems.map((item) => {
             const isActive = pathname === item.href;
@@ -133,14 +144,15 @@ export function Sidebar() {
                   <Link
                     href={item.href}
                     className={cn(
-                      "flex items-center justify-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors duration-200 cursor-pointer lg:justify-start",
+                      "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 cursor-pointer",
+                      isMobile ? "justify-start" : "justify-center lg:justify-start",
                       isActive
-                        ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                        : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
+                        ? "bg-blue-500/10 text-blue-600 dark:text-blue-400 shadow-sm ring-1 ring-blue-500/20"
+                        : "text-muted-foreground hover:bg-white/40 dark:hover:bg-white/10 hover:text-foreground"
                     )}
                   >
                     <item.icon className="h-5 w-5 shrink-0" />
-                    <span className="hidden lg:inline-block">{item.title}</span>
+                    <span className={cn(isMobile ? "block" : "hidden lg:inline-block")}>{item.title}</span>
                   </Link>
                 </TooltipTrigger>
                 <TooltipContent side="right" className="lg:hidden">

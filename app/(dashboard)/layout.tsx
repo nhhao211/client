@@ -1,4 +1,4 @@
-import { Sidebar, ProtectedRoute } from "@/components/common";
+import { Sidebar, ProtectedRoute, Header } from "@/components/common";
 
 export default function DashboardLayout({
   children,
@@ -14,8 +14,11 @@ export default function DashboardLayout({
         </div>
 
         {/* Main Content */}
-        <main className="lg:pl-64 min-h-screen transition-all duration-200">
-          {children}
+        <main className="lg:pl-64 min-h-screen transition-all duration-200 flex flex-col">
+          <Header />
+          <div className="flex-1">
+            {children}
+          </div>
         </main>
       </div>
     </ProtectedRoute>

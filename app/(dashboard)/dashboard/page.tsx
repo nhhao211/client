@@ -1,28 +1,38 @@
 "use client";
 
 import Link from "next/link";
-import { FileText, Plus, Clock, Star, TrendingUp, Loader2, AlertCircle } from "lucide-react";
-import { Header } from "@/components/common";
+import { FileText, Plus, Clock, Star, TrendingUp, Loader2, AlertCircle, ArrowRight, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import * as docService from "@/services/docService";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { GlassCard } from "@/components/ui/glass-card";
+import { DocumentCard } from "@/components/documents/DocumentCard";
+import { motion } from "framer-motion";
+import { Document } from "@/services/docService";
+import { toast } from "react-hot-toast";
 
-interface Document {
-  id: number;
-  title: string;
-  content: string;
-  status: "draft" | "archived";
-  isFavorite: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const item = {
+  hidden: { y: 20, opacity: 0 },
+  show: { y: 0, opacity: 1 }
+};
 
 export default function DashboardPage() {
-  const router = useRouter();
   const [documents, setDocuments] = useState<Document[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Fetch documents on mount
   useEffect(() => {
@@ -43,180 +53,193 @@ export default function DashboardPage() {
     fetchDocuments();
   }, []);
 
-  // Create new document
-  const handleCreateDocument = async () => {
+  async function handleDelete(id: number) {
+    setDeleteId(id);
+  }
+
+  async function handleConfirmDelete() {
+    if (deleteId === null) return;
     try {
-      const newDoc = await docService.createDocument({
-        title: "Untitled Document",
-        content: "",
-      });
-      router.push(`/editor/${newDoc.id}`);
-    } catch (err: any) {
-      console.error("Failed to create document:", err);
-      setError("Failed to create new document");
+      setIsDeleting(true);
+      await docService.deleteDocument(deleteId);
+      setDocuments(documents.filter(d => d.id !== deleteId));
+      toast.success("Document deleted");
+    } catch (error) {
+      console.error("Failed to delete document", error);
+      toast.error("Failed to delete document");
+    } finally {
+      setIsDeleting(false);
+      setDeleteId(null);
     }
-  };
+  }
 
-  // Format date to relative time
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMins / 60);
-    const diffDays = Math.floor(diffHours / 24);
+  async function handleToggleFavorite(id: number) {
+    const doc = documents.find(d => d.id === id);
+    if (!doc) return;
+    try {
+      const updated = await docService.updateDocument(id, { isFavorite: !doc.isFavorite });
+      setDocuments(documents.map(d => d.id === id ? updated : d));
+    } catch (error) {
+       console.error("Failed to update favorite status", error);
+       toast.error("Failed to update favorite status");
+    }
+  }
 
-    if (diffMins < 1) return "just now";
-    if (diffMins < 60) return `${diffMins}m ago`;
-    if (diffHours < 24) return `${diffHours}h ago`;
-    if (diffDays < 7) return `${diffDays}d ago`;
-    return date.toLocaleDateString();
-  };
-
-  const recentDocuments = documents.slice(0, 3);
+  const recentDocuments = documents.slice(0, 4);
   const favoriteCount = documents.filter((doc) => doc.isFavorite).length;
+  const draftCount = documents.filter((doc) => doc.status === "draft").length;
+  
   const stats = [
-    { label: "Total Documents", value: documents.length.toString(), icon: FileText },
-    { label: "Favorites", value: favoriteCount.toString(), icon: Star },
-    { label: "Drafts", value: documents.filter((doc) => doc.status === "draft").length.toString(), icon: TrendingUp },
+    { label: "Total Documents", value: documents.length.toString(), icon: FileText, color: "text-blue-500", bg: "bg-blue-500/10", border: "border-blue-500/20", glow: "from-blue-500/20" },
+    { label: "Favorites", value: favoriteCount.toString(), icon: Star, color: "text-yellow-500", bg: "bg-yellow-500/10", border: "border-yellow-500/20", glow: "from-yellow-500/20" },
+    { label: "Drafts", value: draftCount.toString(), icon: TrendingUp, color: "text-indigo-500", bg: "bg-indigo-500/10", border: "border-indigo-500/20", glow: "from-indigo-500/20" },
   ];
 
   return (
-    <>
-      <Header title="Dashboard" />
-
-      <div className="p-4 lg:p-6 space-y-6">
-        {/* Welcome Section */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h2 className="text-2xl font-bold font-heading tracking-tight">
-              Welcome back!
-            </h2>
-            <p className="text-muted-foreground">
-              Create, edit, and manage your Markdown documents with AI-powered
-              formatting.
-            </p>
-          </div>
-          <Button asChild className="cursor-pointer w-full sm:w-auto">
-            <Link href="/editor/new">
-              <Plus className="mr-2 h-4 w-4" />
-              New Document
-            </Link>
-          </Button>
+    <div className="p-8 max-w-7xl mx-auto space-y-8">
+      {/* Welcome Section */}
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+      >
+        <div>
+          <h2 className="text-4xl font-bold tracking-tight text-foreground">
+            Dashboard
+          </h2>
+          <p className="text-muted-foreground mt-2 text-lg">
+            Welcome back to your workspace.
+          </p>
         </div>
+        <Button 
+            asChild
+            className="cursor-pointer bg-primary text-primary-foreground hover:bg-primary/90 transition-all font-medium border border-white/10"
+        >
+          <Link href="/editor/new">
+            <Plus className="mr-2 h-4 w-4" />
+            <span className="font-semibold">New Document</span>
+          </Link>
+        </Button>
+      </motion.div>
 
-        {/* Stats Grid */}
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {stats.map((stat) => (
-            <div
-              key={stat.label}
-              className="rounded-xl border border-border bg-card p-6 transition-colors duration-200 hover:bg-accent/50 cursor-pointer"
-            >
-              <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-                  <stat.icon className="h-6 w-6 text-primary" />
+      {/* Stats Grid */}
+      <motion.div 
+        variants={container}
+        initial="hidden"
+        animate="show"
+        className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+      >
+        {stats.map((stat) => (
+          <motion.div key={stat.label} variants={item}>
+            <GlassCard className={`lg:col-span-1 p-6 relative overflow-hidden bg-gradient-to-br ${stat.glow} to-transparent backdrop-blur-2xl ${stat.border} group hover:scale-[1.02] transition-transform duration-300`}>
+                <div className="flex items-start justify-between relative z-10">
+                    <div>
+                        <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mb-2">{stat.label}</p>
+                        <p className="text-4xl font-bold tracking-tight">{stat.value}</p>
+                    </div>
+                    <div className={`flex h-12 w-12 items-center justify-center rounded-xl shadow-inner ${stat.bg}`}>
+                        <stat.icon className={`h-6 w-6 ${stat.color}`} />
+                    </div>
                 </div>
+                {/* Decorative blob with specific color */}
+                <div className={`absolute -right-6 -bottom-6 w-24 h-24 rounded-full opacity-20 blur-2xl ${stat.bg.replace('/10', '')}`} />
+            </GlassCard>
+          </motion.div>
+        ))}
+      </motion.div>
+
+      {/* Error State */}
+      {error && (
+        <GlassCard className="border-red-500/20 bg-red-500/5">
+            <div className="flex items-start gap-3 text-red-500">
+                <AlertCircle className="h-5 w-5 mt-0.5" />
                 <div>
-                  <p className="text-2xl font-bold font-heading">{stat.value}</p>
-                  <p className="text-sm text-muted-foreground">{stat.label}</p>
+                    <h3 className="font-semibold">Error</h3>
+                    <p className="text-sm opacity-90">{error}</p>
                 </div>
-              </div>
             </div>
-          ))}
+        </GlassCard>
+      )}
+
+      {/* Recent Documents Section */}
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+            <h3 className="text-xl font-bold flex items-center gap-2">
+                <Clock className="h-5 w-5 text-muted-foreground" />
+                Recent Activity
+            </h3>
+            {documents.length > 0 && (
+                <Link
+                href="/documents"
+                className="group flex items-center gap-1 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+                >
+                View all
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                </Link>
+            )}
         </div>
 
-        {/* Error State */}
-        {error && (
-          <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 flex items-start gap-3">
-            <AlertCircle className="h-5 w-5 text-destructive mt-0.5" />
-            <div>
-              <h3 className="font-semibold text-destructive">Error</h3>
-              <p className="text-sm text-destructive/80">{error}</p>
-            </div>
-          </div>
-        )}
-
-        {/* Loading State */}
         {isLoading ? (
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-            <span className="ml-2 text-muted-foreground">Loading documents...</span>
-          </div>
-        ) : (
-          <>
-            {/* Recent Documents */}
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold font-heading flex items-center gap-2">
-                  <Clock className="h-5 w-5 text-muted-foreground" />
-                  Recent Documents
-                </h3>
-                {documents.length > 3 && (
-                  <Link
-                    href="/dashboard/documents"
-                    className="text-sm text-primary hover:underline cursor-pointer"
-                  >
-                    View all ({documents.length})
-                  </Link>
-                )}
-              </div>
-
-              {documents.length === 0 ? (
-                // Empty State
-                <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-border p-12 text-center">
-                  <FileText className="h-12 w-12 text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">No documents yet</h3>
-                  <p className="text-muted-foreground mb-6">
-                    Create your first document to get started
-                  </p>
-                  <Button onClick={handleCreateDocument} className="cursor-pointer">
-                    <Plus className="mr-2 h-4 w-4" />
-                    Create First Document
-                  </Button>
-                </div>
-              ) : (
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {recentDocuments.map((doc) => (
-                    <Link
-                      key={doc.id}
-                      href={`/editor/${doc.id}`}
-                      className="group relative rounded-xl border border-border bg-card p-5 transition-all duration-200 hover:border-primary/50 hover:shadow-lg cursor-pointer"
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="flex items-center gap-3 flex-1 min-w-0">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted shrink-0">
-                            <FileText className="h-5 w-5 text-muted-foreground" />
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <h4 className="font-medium group-hover:text-primary transition-colors duration-200 truncate">
-                              {doc.title || "Untitled"}
-                            </h4>
-                            <p className="text-sm text-muted-foreground">
-                              {formatDate(doc.updatedAt)}
-                            </p>
-                          </div>
-                        </div>
-                        {doc.isFavorite && (
-                          <Star className="h-4 w-4 fill-yellow-500 text-yellow-500 shrink-0" />
-                        )}
-                      </div>
-                    </Link>
-                  ))}
-
-                  {/* Create New Card */}
-                  <button
-                    onClick={handleCreateDocument}
-                    className="flex min-h-30 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border p-5 text-muted-foreground transition-colors duration-200 hover:border-primary hover:text-primary hover:bg-accent/50"
-                  >
-                    <Plus className="h-8 w-8" />
-                    <span className="text-sm font-medium">Create New</span>
-                  </button>
-                </div>
-              )}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {[1, 2, 3, 4].map(i => (
+                    <div key={i} className="h-48 rounded-xl bg-muted/50 animate-pulse" />
+                ))}
             </div>
-          </>
+        ) : documents.length === 0 ? (
+            <GlassCard className="flex flex-col items-center justify-center p-12 text-center border-dashed border-2 bg-transparent">
+                <div className="w-16 h-16 bg-muted/50 rounded-full flex items-center justify-center mb-4">
+                    <FileText className="h-8 w-8 text-muted-foreground" />
+                </div>
+                <h3 className="text-lg font-semibold mb-2">No documents yet</h3>
+                <p className="text-muted-foreground mb-6 max-w-sm">
+                    Your workspace is looking a bit empty. Create your first document to get started!
+                </p>
+                <Button asChild>
+                    <Link href="/editor/new">
+                        <Plus className="mr-2 h-4 w-4" />
+                        Create First Document
+                    </Link>
+                </Button>
+            </GlassCard>
+        ) : (
+            <motion.div 
+                variants={container}
+                initial="hidden"
+                animate="show"
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+            >
+                {recentDocuments.map((doc) => (
+                    <motion.div key={doc.id} variants={item}>
+                        <DocumentCard 
+                          doc={doc} 
+                          onDelete={handleDelete}
+                          onToggleFavorite={handleToggleFavorite}
+                        />
+                    </motion.div>
+                ))}
+            </motion.div>
         )}
       </div>
-    </>
+
+      <Dialog open={deleteId !== null} onOpenChange={(open) => !open && setDeleteId(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete document</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this document? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteId(null)} disabled={isDeleting}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleConfirmDelete} disabled={isDeleting}>
+              {isDeleting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Trash2 className="w-4 h-4 mr-2" />}
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 }

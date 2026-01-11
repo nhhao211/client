@@ -79,3 +79,45 @@ export async function updateDocument(
 export async function deleteDocument(id: string | number): Promise<void> {
   await apiClient.delete(`/v1/docs/${id}`);
 }
+
+/**
+ * Export a document as DOCX
+ */
+export async function exportDocumentAsDocx(id: string | number, fileName?: string): Promise<void> {
+  try {
+    console.log(`Requesting export for doc ${id}`);
+    const response = await apiClient.get(`/v1/docs/${id}/export/docx`, {
+      responseType: 'blob'
+    });
+
+    console.log("Export response received:", response);
+    console.log("Blob size:", response.data.size);
+    console.log("Blob type:", response.data.type);
+
+    if (response.data.type === 'application/json') {
+        const text = await response.data.text();
+        console.error("Received JSON instead of blob:", text);
+        throw new Error("Server returned JSON error: " + text);
+    }
+
+    // Create a blob URL and trigger download
+    const blobUrl = window.URL.createObjectURL(response.data);
+    const link = document.createElement('a');
+    link.href = blobUrl;
+    link.download = fileName || `document-${id}.docx`;
+    document.body.appendChild(link);
+    link.click();
+    
+    // Delay cleanup to ensure download starts
+    setTimeout(() => {
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(blobUrl);
+        console.log("Download cleanup done");
+    }, 100);
+    
+    console.log("Download triggered");
+  } catch (error) {
+    console.error('Failed to export document:', error);
+    throw error;
+  }
+}
