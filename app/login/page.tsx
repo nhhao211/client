@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { loadGoogleScript, initializeGoogleAuth, renderGoogleButton } from "@/lib/googleAuth";
+import { GoogleLogin } from "@react-oauth/google";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { AnimatedBackground } from "@/components/ui/animated-background";
 import { FileText, ArrowLeft } from "lucide-react";
@@ -14,46 +13,12 @@ export default function LoginPage() {
   const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const googleButtonRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    // Load Google Identity Services script
-    const initGoogle = async () => {
-      try {
-        await loadGoogleScript();
-        
-        const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
-        if (!clientId) {
-          throw new Error("Google Client ID not configured");
-        }
-
-        // Initialize Google Auth
-        initializeGoogleAuth(clientId, handleGoogleResponse);
-        
-        // Render button if ref is available
-        if (googleButtonRef.current) {
-          renderGoogleButton(googleButtonRef.current, {
-            theme: 'outline',
-            size: 'large',
-            text: 'continue_with',
-            shape: 'rectangular',
-          });
-        }
-      } catch (err: any) {
-        console.error("Failed to load Google Auth:", err);
-        setError("Failed to initialize Google Sign-In");
-      }
-    };
-
-    initGoogle();
-  }, []);
-
-  const handleGoogleResponse = async (response: any) => {
+  const handleSuccess = async (response: any) => {
     setError("");
     setIsLoading(true);
 
     try {
-      // Get ID token from Google response
       const idToken = response.credential;
       
       // Sync with backend and auth context
@@ -66,9 +31,13 @@ export default function LoginPage() {
     } catch (err: any) {
       console.error("Google sign-in error:", err);
       setError(err.message || "Google sign-in failed. Please try again.");
-    } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleError = () => {
+    setError("Google Sign-In failed. Please try again.");
+    setIsLoading(false);
   };
 
   return (
@@ -120,12 +89,20 @@ export default function LoginPage() {
                 </div>
               )}
               
-              {/* Google button will be rendered here */}
               {!isLoading && (
-                <div 
-                  ref={googleButtonRef} 
-                  className="flex items-center justify-center w-full"
-                />
+                <div className="flex justify-center w-full">
+                  <GoogleLogin
+                    onSuccess={handleSuccess}
+                    onError={handleError}
+                    theme="outline"
+                    size="large"
+                    shape="rectangular"
+                    width="100%"
+                    logo_alignment="center"
+                    text="continue_with"
+                    useOneTap={false} // Explicitly disable One Tap to prevent looping
+                  />
+                </div>
               )}
 
               <div className="relative">

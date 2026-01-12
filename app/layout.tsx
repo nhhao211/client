@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Poppins, Open_Sans, JetBrains_Mono } from "next/font/google";
-import { ThemeProvider, AuthProvider } from "@/components/providers";
+import { ThemeProvider, AuthProvider, GoogleProvider } from "@/components/providers";
 import { ToastContainer } from "@/components/ui/toast";
 import "./globals.css";
 
@@ -43,10 +43,12 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <GoogleProvider>
           <AuthProvider>
             {children}
             <ToastContainer />
           </AuthProvider>
+          </GoogleProvider>
         </ThemeProvider>
       </body>
     </html>
