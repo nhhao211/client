@@ -30,6 +30,7 @@ export function initializeGoogleAuth(clientId: string, callback: (response: any)
       client_id: clientId,
       callback: handleCredentialResponse,
       locale: 'vi', // Ép kiểu ngôn ngữ sang tiếng Việt
+      use_fedcm_for_prompt: false,
     });
   }
 }
