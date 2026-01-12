@@ -66,17 +66,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const logout = async () => {
-    try {
-      // Logout from Firebase
-      const { logoutFirebase } = await import("@/lib/firebase");
-      await logoutFirebase();
-    } catch (error) {
-      console.error("Firebase logout error:", error);
-    } finally {
-      // Clear local state and token regardless of Firebase logout success
-      authService.logout();
-      setUser(null);
+  const logout = () => {
+    // Clear local state and token
+    authService.logout();
+    setUser(null);
+    
+    // Optionally, revoke Google session
+    if (typeof window !== 'undefined' && window.google) {
+      window.google.accounts.id.disableAutoSelect();
     }
   };
 

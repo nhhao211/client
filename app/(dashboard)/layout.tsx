@@ -7,16 +7,16 @@ export default function DashboardLayout({
 }) {
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-background dark:bg-slate-950">
+      <div className="min-h-screen bg-background">
         {/* Sidebar - hidden on mobile, shown on desktop */}
         <div className="hidden lg:block">
           <Sidebar />
         </div>
 
         {/* Main Content */}
-        <main className="lg:pl-64 min-h-screen transition-all duration-200 flex flex-col bg-background">
+        <main className="lg:pl-64 min-h-screen transition-all duration-150 flex flex-col">
           <Header />
-          <div className="flex-1 bg-background">
+          <div className="flex-1">
             {children}
           </div>
         </main>

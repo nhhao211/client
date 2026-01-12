@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { signInWithGoogle } from "@/lib/firebase";
+import { loadGoogleScript, initializeGoogleAuth, renderGoogleButton } from "@/lib/googleAuth";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { AnimatedBackground } from "@/components/ui/animated-background";
 import { FileText, ArrowLeft } from "lucide-react";
@@ -14,17 +14,47 @@ export default function LoginPage() {
   const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const googleButtonRef = useRef<HTMLDivElement>(null);
 
-  const handleGoogleSignIn = async () => {
+  useEffect(() => {
+    // Load Google Identity Services script
+    const initGoogle = async () => {
+      try {
+        await loadGoogleScript();
+        
+        const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+        if (!clientId) {
+          throw new Error("Google Client ID not configured");
+        }
+
+        // Initialize Google Auth
+        initializeGoogleAuth(clientId, handleGoogleResponse);
+        
+        // Render button if ref is available
+        if (googleButtonRef.current) {
+          renderGoogleButton(googleButtonRef.current, {
+            theme: 'outline',
+            size: 'large',
+            text: 'continue_with',
+            shape: 'rectangular',
+          });
+        }
+      } catch (err: any) {
+        console.error("Failed to load Google Auth:", err);
+        setError("Failed to initialize Google Sign-In");
+      }
+    };
+
+    initGoogle();
+  }, []);
+
+  const handleGoogleResponse = async (response: any) => {
     setError("");
     setIsLoading(true);
 
     try {
-      // Sign in with Google
-      const result = await signInWithGoogle();
-      
-      // Get ID token from Firebase
-      const idToken = result.idToken;
+      // Get ID token from Google response
+      const idToken = response.credential;
       
       // Sync with backend and auth context
       await login(idToken);
@@ -82,24 +112,21 @@ export default function LoginPage() {
 
             {/* Google Sign-In Button */}
             <div className="space-y-6">
-              <Button
-                type="button"
-                onClick={handleGoogleSignIn}
-                disabled={isLoading}
-                className="w-full py-6 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-900 dark:text-gray-100 font-semibold rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 shadow-md hover:shadow-lg cursor-pointer border border-gray-200 dark:border-white/10"
-              >
-                {isLoading ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin" />
-                    Signing in...
-                  </>
-                ) : (
-                  <>
-                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-6 h-6" />
-                    <span>Continue with Google</span>
-                  </>
-                )}
-              </Button>
+              {/* Loading state overlay */}
+              {isLoading && (
+                <div className="flex items-center justify-center gap-3 py-6">
+                  <div className="w-5 h-5 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin" />
+                  <span className="text-gray-600 dark:text-gray-300">Signing in...</span>
+                </div>
+              )}
+              
+              {/* Google button will be rendered here */}
+              {!isLoading && (
+                <div 
+                  ref={googleButtonRef} 
+                  className="flex items-center justify-center w-full"
+                />
+              )}
 
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
