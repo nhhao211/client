@@ -151,11 +151,11 @@ export default function DashboardPage() {
           </div>
           <Button 
               asChild
-              className="cursor-pointer bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:from-blue-700 hover:to-cyan-600 transition-all duration-200 font-medium shadow-md hover:shadow-lg"
+              className="clay-button bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-4 rounded-full font-bold shadow-xl transition-all hover:scale-105"
           >
             <Link href="/editor/new">
-              <Plus className="mr-2 h-4 w-4" />
-              <span className="font-semibold">New Document</span>
+              <Plus className="mr-2 h-5 w-5" />
+              <span className="font-bold">New Document</span>
             </Link>
           </Button>
         </motion.div>
@@ -169,14 +169,14 @@ export default function DashboardPage() {
         >
           {stats.map((stat) => (
             <motion.div key={stat.label} variants={item}>
-              <GlassCard className={`lg:col-span-1 p-6 relative overflow-hidden group transition-all duration-200 ${stat.cardBg} ${stat.cardBorder}`}>
-                  <div className="flex items-start justify-between relative z-10">
+              <GlassCard className="lg:col-span-1 p-6 relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300 !rounded-[2rem]">
+                  <div className="flex items-center justify-between relative z-10">
                       <div>
-                          <p className="text-sm font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-widest mb-2">{stat.label}</p>
-                          <p className={`text-4xl font-bold tracking-tight ${stat.valueColor}`}>{stat.value}</p>
+                          <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-1">{stat.label}</p>
+                          <p className={`text-5xl font-black tracking-tight ${stat.valueColor} drop-shadow-sm`}>{stat.value}</p>
                       </div>
-                      <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${stat.bg} group-hover:opacity-80 transition-opacity duration-200`}>
-                          <stat.icon className={`h-6 w-6 ${stat.color}`} />
+                      <div className={`flex h-16 w-16 items-center justify-center rounded-full ${stat.bg} shadow-inner group-hover:scale-110 transition-transform duration-300`}>
+                          <stat.icon className={`h-8 w-8 ${stat.color}`} />
                       </div>
                   </div>
               </GlassCard>
@@ -186,12 +186,14 @@ export default function DashboardPage() {
 
       {/* Error State */}
       {error && (
-        <GlassCard className="border-red-200 dark:border-red-500/20 bg-red-50 dark:bg-red-500/5">
-            <div className="flex items-start gap-3 text-red-600 dark:text-red-400">
-                <AlertCircle className="h-5 w-5 mt-0.5" />
+        <GlassCard className="border-red-200 bg-red-50 !rounded-[2rem]">
+            <div className="flex items-center gap-4 text-red-600">
+                <div className="p-3 bg-red-100 rounded-full">
+                  <AlertCircle className="h-6 w-6" />
+                </div>
                 <div>
-                    <h3 className="font-semibold">Error</h3>
-                    <p className="text-sm opacity-90">{error}</p>
+                    <h3 className="font-bold text-lg">Oops! Something went wrong</h3>
+                    <p className="font-medium opacity-90">{error}</p>
                 </div>
             </div>
         </GlassCard>
@@ -200,14 +202,16 @@ export default function DashboardPage() {
       {/* Recent Documents Section */}
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-            <h3 className="text-xl font-bold flex items-center gap-2 text-gray-900 dark:text-white">
-                <Clock className="h-5 w-5 text-gray-600 dark:text-gray-300" />
+            <h3 className="text-2xl font-black flex items-center gap-3 text-foreground">
+                <div className="p-2 bg-primary/10 rounded-full">
+                  <Clock className="h-6 w-6 text-primary" />
+                </div>
                 Recent Activity
             </h3>
             {documents.length > 0 && (
                 <Link
                 href="/documents"
-                className="group flex items-center gap-1 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors duration-200 cursor-pointer"
+                className="group flex items-center gap-2 text-sm font-bold text-primary hover:text-primary/80 transition-colors duration-200 cursor-pointer bg-white px-4 py-2 rounded-full shadow-sm hover:shadow-md"
                 >
                 View all
                 <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
@@ -218,21 +222,21 @@ export default function DashboardPage() {
         {isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {[1, 2, 3, 4].map(i => (
-                    <div key={i} className="h-48 rounded-xl bg-muted/50 animate-pulse" />
+                    <div key={i} className="h-48 rounded-[2rem] bg-indigo-50/50 animate-pulse" />
                 ))}
             </div>
         ) : documents.length === 0 ? (
-            <GlassCard className="flex flex-col items-center justify-center p-12 text-center border-dashed border-2 border-gray-300 dark:border-white/20">
-                <div className="w-16 h-16 bg-gray-100 dark:bg-white/10 rounded-full flex items-center justify-center mb-4">
-                    <FileText className="h-8 w-8 text-gray-400 dark:text-gray-500" />
+            <GlassCard className="flex flex-col items-center justify-center p-16 text-center border-dashed border-4 border-muted !rounded-[3rem] bg-white/50">
+                <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mb-6 animate-bounce">
+                    <FileText className="h-10 w-10 text-primary" />
                 </div>
-                <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">No documents yet</h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-6 max-w-sm">
+                <h3 className="text-2xl font-black mb-3 text-foreground">No documents yet</h3>
+                <p className="text-muted-foreground mb-8 max-w-md text-lg font-medium">
                     Your workspace is looking a bit empty. Create your first document to get started!
                 </p>
-                <Button asChild className="cursor-pointer">
+                <Button asChild className="clay-button bg-primary text-white px-8 py-6 rounded-full font-bold shadow-lg hover:shadow-xl transition-all">
                     <Link href="/editor/new">
-                        <Plus className="mr-2 h-4 w-4" />
+                        <Plus className="mr-2 h-5 w-5" />
                         Create First Document
                     </Link>
                 </Button>

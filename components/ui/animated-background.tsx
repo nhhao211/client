@@ -42,9 +42,10 @@ export function AnimatedBackground() {
         this.size = Math.random() * 80 + 40;
         this.speedX = Math.random() * 0.3 - 0.15;
         this.speedY = Math.random() * 0.3 - 0.15;
-        // Neutral palette for light mode, cool for dark mode
+        // Playful Warm palette
         const isDark = document.documentElement.classList.contains('dark');
-        const hues = isDark ? [220, 200, 190, 180] : [220, 210, 200, 195]; // Neutral: blue-gray tones
+        // Light: Orange, Yellow, Pink, Coral | Dark: Deep Purple, Mauve, Indigo
+        const hues = isDark ? [260, 280, 320, 340] : [35, 45, 10, 340]; 
         this.hue = hues[Math.floor(Math.random() * hues.length)];
       }
 

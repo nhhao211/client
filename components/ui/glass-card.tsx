@@ -11,20 +11,19 @@ export function GlassCard({ className, children, hoverEffect = true, ...props }:
   return (
     <motion.div
       initial={hoverEffect ? { scale: 1, y: 0 } : undefined}
-      whileHover={hoverEffect ? { scale: 1.01 } : undefined}
+      whileHover={hoverEffect ? { scale: 1.02, translateY: -5 } : undefined}
       transition={{ type: "spring", stiffness: 300, damping: 25 }}
       className={cn(
-        "relative overflow-hidden rounded-xl border border-gray-200/60 dark:border-white/10 bg-white/85 dark:bg-slate-900/90 backdrop-blur-xl p-6 shadow-sm dark:shadow-lg",
-        "transition-all duration-200 hover:shadow-md dark:hover:shadow-xl",
-        "hover:border-gray-300/70 dark:hover:border-white/20",
-        "cursor-pointer",
+        "clay-card relative overflow-hidden transition-all duration-300",
+        // Default to white/card-color, but allow overrides. 
+        // Note: clay-card in globals usually has !important bg, so overrides might need !important or inline styles.
+        // We'll trust the global clay-card class for the base look.
+        "p-6", 
+        hoverEffect && "cursor-pointer",
         className
       )}
       {...props}
     >
-      {/* Subtle decorative glow blobs - lighter and more subtle */}
-      <div className="absolute -left-10 -top-10 h-40 w-40 rounded-full bg-blue-500/3 dark:bg-blue-500/5 blur-3xl" />
-      <div className="absolute -bottom-10 -right-10 h-40 w-40 rounded-full bg-cyan-500/3 dark:bg-cyan-500/5 blur-3xl" />
       <div className="relative z-10">{children}</div>
     </motion.div>
   );

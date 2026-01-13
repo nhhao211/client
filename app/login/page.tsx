@@ -43,90 +43,101 @@ export default function LoginPage() {
   return (
     <>
       <AnimatedBackground />
-      <div className="min-h-screen flex items-center justify-center px-4 relative">
-        {/* Back to Home Button */}
+      <AnimatedBackground />
+      <AnimatedBackground />
+      <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden">
+        {/* Decorative Blobs */}
+        <div className="fixed top-0 left-0 w-full h-full pointer-events-none -z-10">
+          <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-primary/20 rounded-full blur-[100px] opacity-60 animate-pulse" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-accent/20 rounded-full blur-[120px] opacity-50 animate-pulse delay-700" />
+        </div>
+
+        {/* Back to Home Button - Bubbly Clay */}
+        {/* Back to Home Button - Bubbly Clay */}
         <Link 
           href="/" 
-          className="absolute top-8 left-8 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200 flex items-center gap-2 group cursor-pointer"
+          className="absolute top-8 left-8 z-50"
         >
-          <div className="p-2 rounded-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-gray-200 dark:border-white/10 group-hover:bg-gray-50 dark:group-hover:bg-slate-800 transition-all shadow-sm">
-            <ArrowLeft className="w-4 h-4" />
+          <div className="clay-card !bg-white dark:!bg-gray-800 px-6 py-3 !rounded-full flex items-center gap-2 hover:scale-105 transition-transform cursor-pointer">
+            <ArrowLeft className="w-5 h-5 text-primary" />
+            <span className="font-bold text-sm text-foreground">Back to Home</span>
           </div>
-          <span className="text-sm font-medium">Back to Home</span>
         </Link>
 
-        {/* Login Card */}
+        {/* Login Card - Playful Clay */}
         <div className="relative z-10 w-full max-w-md">
-          <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-gray-200/60 dark:border-white/10 rounded-2xl p-8 shadow-xl relative">
+          <div className="clay-card p-12 relative overflow-hidden !rounded-[2.5rem]">
             {/* Header */}
-            <div className="text-center mb-8">
-              <div className="flex justify-center mb-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center shadow-md">
-                  <FileText className="w-8 h-8 text-white" />
+            <div className="text-center mb-10">
+              <div className="flex justify-center mb-6">
+                <div className="w-24 h-24 bg-gradient-to-tr from-primary to-accent rounded-[2rem] flex items-center justify-center shadow-inner transform rotate-3">
+                  <FileText className="w-12 h-12 text-white" />
                 </div>
               </div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-400 dark:to-cyan-400 bg-clip-text text-transparent mb-2">
-                Welcome Back
+              <h1 className="text-4xl font-black text-foreground mb-3 tracking-tight">
+                Welcome Back!
               </h1>
-              <p className="text-gray-600 dark:text-gray-300 text-lg">Sign in to MemMart</p>
+              <p className="text-muted-foreground text-xl font-medium">Ready to create some magic?</p>
             </div>
 
             {/* Error Message */}
             {error && (
-              <div className="mb-6 p-4 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 rounded-lg text-red-600 dark:text-red-400 text-sm flex items-center gap-2">
-                 <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+              <div className="mb-8 p-4 bg-red-100/50 border-2 border-red-200 rounded-3xl text-red-600 text-sm flex items-center gap-3 font-bold">
+                 <div className="w-3 h-3 rounded-full bg-red-500 animate-bounce" />
                 {error}
               </div>
             )}
 
             {/* Google Sign-In Button */}
-            <div className="space-y-6">
+            <div className="space-y-8">
               {/* Loading state overlay */}
               {isLoading && (
                 <div className="flex items-center justify-center gap-3 py-6">
-                  <div className="w-5 h-5 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin" />
-                  <span className="text-gray-600 dark:text-gray-300">Signing in...</span>
+                  <div className="w-8 h-8 border-4 border-gray-200 border-t-primary rounded-full animate-spin" />
+                  <span className="text-primary font-bold text-lg">Signing you in...</span>
                 </div>
               )}
               
               {!isLoading && (
                 <div className="flex justify-center w-full">
-                  <GoogleLogin
-                    onSuccess={handleSuccess}
-                    onError={handleError}
-                    theme="outline"
-                    size="large"
-                    shape="rectangular"
-                    width="100%"
-                    logo_alignment="center"
-                    text="continue_with"
-                    useOneTap={false} // Explicitly disable One Tap to prevent looping
-                  />
+                  <div className="w-full transform transition-transform hover:-translate-y-1 hover:scale-[1.02]">
+                     <GoogleLogin
+                      onSuccess={handleSuccess}
+                      onError={handleError}
+                      theme="filled_blue"
+                      size="large"
+                      shape="pill"
+                      width="100%"
+                      logo_alignment="center"
+                      text="continue_with"
+                      useOneTap={false}
+                    />
+                  </div>
                 </div>
               )}
 
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t border-gray-200 dark:border-white/10" />
+                  <span className="w-full border-t-2 border-dashed border-gray-200" />
                 </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-white dark:bg-slate-900 px-2 text-gray-600 dark:text-gray-400">
-                    Secure Authentication
+                <div className="relative flex justify-center text-xs uppercase tracking-wider font-extrabold">
+                  <span className="bg-white px-4 text-muted-foreground/60">
+                    Trusted & Secure
                   </span>
                 </div>
               </div>
 
               {/* Info */}
-              <p className="text-center text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
-                By continuing, you agree to MemMart's <Link href="#" className="underline hover:text-gray-700 dark:hover:text-gray-200 transition-colors">Terms of Service</Link> and <Link href="#" className="underline hover:text-gray-700 dark:hover:text-gray-200 transition-colors">Privacy Policy</Link>.
+              <p className="text-center text-sm text-muted-foreground font-medium leading-relaxed">
+                By hopping in, you agree to MemMart's <Link href="#" className="text-primary hover:text-accent font-bold hover:underline transition-all">Terms</Link> and <Link href="#" className="text-primary hover:text-accent font-bold hover:underline transition-all">Privacy Policy</Link>.
               </p>
             </div>
           </div>
           
            {/* Footer Text */}
-           <div className="text-center mt-8 space-y-2">
-            <p className="text-gray-600 dark:text-gray-300 text-sm">
-              New here? <Link href="/login" className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors">Create an account</Link>
+           <div className="text-center mt-10 space-y-2">
+            <p className="text-muted-foreground font-bold">
+              New here? <Link href="/login" className="text-primary hover:text-primary/80 font-black transition-colors underline decoration-wavy decoration-2">Create an account</Link>
             </p>
           </div>
         </div>

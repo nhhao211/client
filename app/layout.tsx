@@ -1,19 +1,19 @@
 import type { Metadata } from "next";
-import { Poppins, Open_Sans, JetBrains_Mono } from "next/font/google";
+import { Fredoka, Nunito, JetBrains_Mono } from "next/font/google";
 import { ThemeProvider, AuthProvider, GoogleProvider } from "@/components/providers";
 import { ToastContainer } from "@/components/ui/toast";
 import "./globals.css";
 
-const poppins = Poppins({
+const fredoka = Fredoka({
   variable: "--font-heading",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
-const openSans = Open_Sans({
+const nunito = Nunito({
   variable: "--font-body",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["200", "300", "400", "500", "600", "700", "800", "900"],
 });
 
 const jetbrainsMono = JetBrains_Mono({
@@ -23,8 +23,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "MarkFlow AI - Smart Markdown Editor",
-  description: "AI-powered Markdown editor for developers. Auto-format, preview, and export your documentation.",
+  title: "MemMart - Write Smarter",
+  description: "Your cute & intelligent writing companion.",
 };
 
 export default function RootLayout({
@@ -35,11 +35,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${poppins.variable} ${openSans.variable} ${jetbrainsMono.variable} font-body antialiased`}
+        className={`${fredoka.variable} ${nunito.variable} ${jetbrainsMono.variable} font-body antialiased`}
       >
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
+          defaultTheme="light"
           enableSystem
           disableTransitionOnChange
         >

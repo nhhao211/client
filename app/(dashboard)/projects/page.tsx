@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import { GlassCard } from "@/components/ui/glass-card";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { AnimatedBackground } from "@/components/ui/animated-background";
 import * as projectService from "@/services/projectService";
 import type { Project } from "@/services/projectService";
 import {
@@ -151,59 +152,66 @@ export default function ProjectsPage() {
   const completedCount = projects.filter(p => p.status === 'completed').length;
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-8">
-      {/* Header */}
+    <>
+      <AnimatedBackground />
+      <div className="p-8 max-w-7xl mx-auto space-y-8">
+        {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-bold tracking-tight text-foreground">
-            Projects
-          </h1>
-          <p className="text-muted-foreground mt-1">Manage your projects and track progress with Kanban boards.</p>
+          <div className="flex items-center gap-3 mb-2">
+             <div className="p-3 bg-blue-100 rounded-full text-blue-600">
+               <LayoutGrid className="w-8 h-8" />
+             </div>
+            <h1 className="text-4xl font-black tracking-tight text-foreground">
+              Projects
+            </h1>
+          </div>
+          <p className="text-muted-foreground ml-1 text-lg font-medium">Manage your projects and track progress with Kanban boards.</p>
         </div>
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger asChild>
             <Button 
-              className="cursor-pointer bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:from-blue-700 hover:to-cyan-600 transition-all duration-200 font-medium shadow-md hover:shadow-lg"
+              className="clay-button bg-primary hover:bg-primary/90 text-white px-8 py-6 rounded-full font-bold shadow-lg hover:shadow-xl transition-all"
             >
-              <Plus className="mr-2 h-4 w-4" />
-              <span className="font-semibold">New Project</span>
+              <Plus className="mr-2 h-5 w-5" />
+              <span className="font-bold text-lg">New Project</span>
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-md">
+          <DialogContent className="sm:max-w-md !rounded-[2rem] border-none shadow-2xl">
             <DialogHeader>
-              <DialogTitle>Create New Project</DialogTitle>
+              <DialogTitle className="text-2xl font-black text-center">Create New Project</DialogTitle>
             </DialogHeader>
-            <div className="space-y-4 py-4">
+            <div className="space-y-6 py-4">
               <div className="space-y-2">
-                <label htmlFor="title" className="text-sm font-medium">Project Title</label>
+                <label htmlFor="title" className="text-sm font-bold ml-1 text-muted-foreground">Project Title</label>
                 <input
                   id="title"
                   type="text"
                   value={newProjectTitle}
                   onChange={(e) => setNewProjectTitle(e.target.value)}
                   placeholder="e.g., Website Redesign"
-                  className="w-full px-3 py-2 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:outline-none"
+                  className="w-full px-4 py-3 bg-gray-50 border-2 border-transparent focus:border-primary/50 focus:bg-white rounded-xl focus:outline-none transition-all font-medium"
                 />
               </div>
               <div className="space-y-2">
-                <label htmlFor="description" className="text-sm font-medium">Description (optional)</label>
+                <label htmlFor="description" className="text-sm font-bold ml-1 text-muted-foreground">Description (optional)</label>
                 <textarea
                   id="description"
                   value={newProjectDescription}
                   onChange={(e) => setNewProjectDescription(e.target.value)}
                   placeholder="Brief description of the project"
                   rows={3}
-                  className="w-full px-3 py-2 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:outline-none resize-none"
+                  className="w-full px-4 py-3 bg-gray-50 border-2 border-transparent focus:border-primary/50 focus:bg-white rounded-xl focus:outline-none resize-none transition-all font-medium"
                 />
               </div>
               <Button 
                 onClick={handleCreateProject} 
                 disabled={isCreating}
-                className="w-full"
+                className="w-full clay-button py-6 text-lg font-bold"
               >
                 {isCreating ? (
                   <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
                     Creating...
                   </>
                 ) : (
@@ -217,64 +225,76 @@ export default function ProjectsPage() {
 
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <GlassCard className="flex items-center gap-4 bg-gradient-to-br from-blue-500/10 to-transparent">
-            <div className="p-3 bg-blue-500/20 rounded-lg text-blue-500">
-                <LayoutGrid className="w-6 h-6" />
-            </div>
-            <div>
-                <p className="text-sm text-muted-foreground">Total Projects</p>
-                <p className="text-2xl font-bold">{projects.length}</p>
-            </div>
-        </GlassCard>
-         <GlassCard className="flex items-center gap-4 bg-gradient-to-br from-emerald-500/10 to-transparent">
-            <div className="p-3 bg-emerald-500/20 rounded-lg text-emerald-500">
-                <CheckCircle2 className="w-6 h-6" />
-            </div>
-            <div>
-                <p className="text-sm text-muted-foreground">Completed</p>
-                <p className="text-2xl font-bold">{completedCount}</p>
+        <GlassCard className="p-6 relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300 !rounded-[2rem]">
+            <div className="flex items-center justify-between relative z-10">
+                <div>
+                    <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-1">Total Projects</p>
+                    <p className="text-5xl font-black tracking-tight text-blue-600 drop-shadow-sm">{projects.length}</p>
+                </div>
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 text-blue-600 shadow-inner group-hover:scale-110 transition-transform duration-300">
+                    <LayoutGrid className="w-8 h-8" />
+                </div>
             </div>
         </GlassCard>
-         <GlassCard className="flex items-center gap-4 bg-gradient-to-br from-orange-500/10 to-transparent">
-            <div className="p-3 bg-orange-500/20 rounded-lg text-orange-500">
-                <Clock className="w-6 h-6" />
+         <GlassCard className="p-6 relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300 !rounded-[2rem]">
+            <div className="flex items-center justify-between relative z-10">
+                <div>
+                    <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-1">Completed</p>
+                    <p className="text-5xl font-black tracking-tight text-emerald-600 drop-shadow-sm">{completedCount}</p>
+                </div>
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 shadow-inner group-hover:scale-110 transition-transform duration-300">
+                    <CheckCircle2 className="w-8 h-8" />
+                </div>
             </div>
-            <div>
-                <p className="text-sm text-muted-foreground">In Progress</p>
-                <p className="text-2xl font-bold">{activeCount}</p>
+        </GlassCard>
+         <GlassCard className="p-6 relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300 !rounded-[2rem]">
+             <div className="flex items-center justify-between relative z-10">
+                <div>
+                    <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-1">In Progress</p>
+                    <p className="text-5xl font-black tracking-tight text-orange-600 drop-shadow-sm">{activeCount}</p>
+                </div>
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-orange-100 text-orange-600 shadow-inner group-hover:scale-110 transition-transform duration-300">
+                    <Clock className="w-8 h-8" />
+                </div>
             </div>
         </GlassCard>
       </div>
 
       {/* Controls */}
-      <div className="flex items-center gap-4 bg-white/50 dark:bg-neutral-900/50 p-4 rounded-2xl border border-white/10 backdrop-blur-md shadow-sm">
+      <div className="clay-card !rounded-[2rem] p-4 flex items-center gap-4 bg-white dark:bg-card">
         <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary" />
             <input 
                 type="text" 
-                placeholder="Search projects..." 
+                placeholder="Search projects by title..." 
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full bg-transparent border-none focus:ring-0 pl-10 text-sm placeholder:text-muted-foreground"
+                className="w-full bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-primary/20 rounded-full py-4 pl-12 text-base font-medium placeholder:text-muted-foreground transition-all"
             />
         </div>
-        <div className="h-6 w-px bg-border" />
+        <div className="h-8 w-px bg-border" />
         <div className="flex items-center gap-2">
             <Button 
                 variant={view === 'grid' ? 'secondary' : 'ghost'} 
                 size="icon" 
                 onClick={() => setView('grid')}
-                className="cursor-pointer"
+                className={cn(
+                  "cursor-pointer rounded-full h-12 w-12 transition-all hover:scale-105", 
+                  view === 'grid' ? "bg-primary text-white shadow-lg" : "text-muted-foreground hover:bg-gray-100"
+                )}
             >
-                <LayoutGrid className="w-4 h-4" />
+                <LayoutGrid className="w-5 h-5" />
             </Button>
              <Button 
                 variant={view === 'list' ? 'secondary' : 'ghost'} 
                 size="icon" 
                 onClick={() => setView('list')}
-                className="cursor-pointer"
+                className={cn(
+                  "cursor-pointer rounded-full h-12 w-12 transition-all hover:scale-105", 
+                  view === 'list' ? "bg-primary text-white shadow-lg" : "text-muted-foreground hover:bg-gray-100"
+                )}
             >
-                <List className="w-4 h-4" />
+                <List className="w-5 h-5" />
             </Button>
         </div>
       </div>
@@ -283,20 +303,20 @@ export default function ProjectsPage() {
       {isLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3].map(i => (
-            <div key={i} className="h-48 rounded-xl bg-muted/50 animate-pulse" />
+            <div key={i} className="h-48 rounded-[2.5rem] bg-gray-100 dark:bg-gray-800 animate-pulse" />
           ))}
         </div>
       ) : filteredProjects.length === 0 ? (
-        <GlassCard className="flex flex-col items-center justify-center p-12 text-center border-dashed border-2 bg-transparent">
-          <div className="w-16 h-16 bg-muted/50 rounded-full flex items-center justify-center mb-4">
-            <FolderOpen className="h-8 w-8 text-muted-foreground" />
+        <GlassCard className="flex flex-col items-center justify-center p-16 text-center border-dashed border-4 border-muted !rounded-[3rem] bg-white/50">
+          <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mb-6 animate-bounce">
+            <FolderOpen className="h-10 w-10 text-primary" />
           </div>
-          <h3 className="text-lg font-semibold mb-2">No projects yet</h3>
-          <p className="text-muted-foreground mb-6 max-w-sm">
+          <h3 className="text-2xl font-black mb-3">No projects yet</h3>
+          <p className="text-muted-foreground mb-8 max-w-md text-lg font-medium">
             Create your first project to start organizing your work with Kanban boards.
           </p>
-          <Button onClick={() => setIsCreateDialogOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" />
+          <Button onClick={() => setIsCreateDialogOpen(true)} className="clay-button bg-primary px-8 py-6 rounded-full font-bold text-lg shadow-lg">
+            <Plus className="mr-2 h-5 w-5" />
             Create First Project
           </Button>
         </GlassCard>
@@ -320,7 +340,7 @@ export default function ProjectsPage() {
               <motion.div key={project.id} variants={item}>
                 <div className="relative h-full group">
                   <Link href={`/projects/${project.id}`} className="block h-full">
-                    <GlassCard className="h-full flex flex-col justify-between hover:border-primary/50 transition-all duration-300">
+                    <GlassCard className="h-full flex flex-col justify-between hover:border-primary/50 transition-all duration-300 !rounded-[2rem] hover:scale-[1.02]">
                     <div className="space-y-4">
                       <div className="flex items-start justify-between">
                         <div className={cn("px-2.5 py-1 rounded-full text-xs font-medium border flex items-center gap-1.5", status.color)}>
@@ -424,5 +444,6 @@ export default function ProjectsPage() {
         />
       )}
     </div>
+    </>
   );
 }
