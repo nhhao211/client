@@ -1,10 +1,12 @@
 "use client";
 
+import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import rehypeRaw from "rehype-raw";
 import { cn } from "@/lib/utils";
+import Mermaid from "./Mermaid";
 
 interface PreviewPaneProps {
   content: string;
@@ -65,6 +67,9 @@ export function PreviewPane({ content, className = "" }: PreviewPaneProps) {
             // Custom code blocks
             code: ({ className, children, ...props }) => {
               const isInline = !className;
+              const match = /language-(\w+)/.exec(className || "");
+              const language = match ? match[1] : "";
+
               if (isInline) {
                 return (
                   <code
@@ -75,17 +80,35 @@ export function PreviewPane({ content, className = "" }: PreviewPaneProps) {
                   </code>
                 );
               }
+
+              if (language === "mermaid") {
+                return <Mermaid chart={String(children).replace(/\n$/, "")} />;
+              }
+
               return (
                 <code className={cn("font-mono text-sm", className)} {...props}>
                   {children}
                 </code>
               );
             },
-            pre: ({ children }) => (
-              <pre className="mt-4 mb-4 overflow-x-auto rounded-lg bg-muted p-4 font-mono text-sm">
-                {children}
-              </pre>
-            ),
+            pre: ({ children }) => {
+              // Check if the children contains a code element with language-mermaid
+              const isMermaid = React.Children.toArray(children).some(
+                (child) =>
+                  React.isValidElement(child) &&
+                  (child.props as any)?.className?.includes("language-mermaid")
+              );
+
+              if (isMermaid) {
+                return <>{children}</>;
+              }
+
+              return (
+                <pre className="mt-4 mb-4 overflow-x-auto rounded-lg bg-muted p-4 font-mono text-sm">
+                  {children}
+                </pre>
+              );
+            },
             // Custom table
             table: ({ children }) => (
               <div className="my-4 w-full overflow-auto">
