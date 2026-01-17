@@ -2,7 +2,7 @@
 
 import { Document } from "@/services/docService";
 import { GlassCard } from "@/components/ui/glass-card";
-import { FileText, MoreVertical, Calendar, Clock, Star, Trash2, Check } from "lucide-react";
+import { FileText, MoreVertical, Calendar, Clock, Star, Trash2, Check, Folder } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -22,9 +22,10 @@ interface DocumentCardProps {
   selected?: boolean;
   onSelect?: (id: number) => void;
   selectionMode?: boolean;
+  onMove?: (id: number) => void;
 }
 
-export function DocumentCard({ doc, onDelete, onToggleFavorite, selected, onSelect, selectionMode }: DocumentCardProps) {
+export function DocumentCard({ doc, onDelete, onToggleFavorite, selected, onSelect, selectionMode, onMove }: DocumentCardProps) {
   return (
     /* Tooltip removed for performance */
       <Link href={`/editor/${doc.id}`} passHref className="block h-full">
@@ -88,6 +89,16 @@ export function DocumentCard({ doc, onDelete, onToggleFavorite, selected, onSele
                   }}>
                     {doc.isFavorite ? <><Star className="mr-2 w-4 h-4" /> Unfavorite</> : <><Star className="mr-2 w-4 h-4" /> Favorite</>}
                   </DropdownMenuItem>
+                  
+                  <DropdownMenuItem 
+                    className="cursor-pointer rounded-xl py-2 px-3 hover:bg-primary/10 hover:text-primary transition-colors font-medium"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onMove?.(doc.id);
+                  }}>
+                    <Folder className="mr-2 w-4 h-4" /> Move to Folder
+                  </DropdownMenuItem>
+
                   <DropdownMenuSeparator className="bg-border/50 my-1" />
                   <DropdownMenuItem 
                     className="text-red-500 focus:text-red-600 cursor-pointer rounded-xl py-2 px-3 hover:bg-red-50 focus:bg-red-50 transition-colors font-medium" 

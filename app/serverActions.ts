@@ -31,7 +31,7 @@ export async function createDocumentAction(data: { title: string; content?: stri
   return json.data.document;
 }
 
-export async function updateDocumentAction(id: number | string, data: { title?: string; content?: string; isFavorite?: boolean }) {
+export async function updateDocumentAction(id: number | string, data: { title?: string; content?: string; isFavorite?: boolean; featureId?: number | null }) {
   const token = await getToken();
   if (!token) throw new Error("Unauthorized");
 
@@ -214,4 +214,78 @@ export async function createProjectAction(data: { title: string; description?: s
     });
 
     if (!res.ok) throw new Error("Failed to delete task");
+  }
+
+  // Features
+  export async function createFeatureAction(data: { title: string; description?: string }) {
+    const token = await getToken();
+    if (!token) throw new Error("Unauthorized");
+  
+    const res = await fetch(`${API_URL}/v1/features`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+  
+    if (!res.ok) throw new Error("Failed to create feature");
+    
+    const json = await res.json();
+    revalidatePath('/documents');
+    return json;
+  }
+  
+  export async function getFeaturesAction() {
+    const token = await getToken();
+    if (!token) throw new Error("Unauthorized");
+  
+    const res = await fetch(`${API_URL}/v1/features`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      cache: 'no-store'
+    });
+  
+    if (!res.ok) throw new Error("Failed to fetch features");
+    
+    const json = await res.json();
+    return json;
+  }
+  
+  export async function updateFeatureAction(id: number, data: { title?: string; description?: string; status?: string }) {
+    const token = await getToken();
+    if (!token) throw new Error("Unauthorized");
+  
+    const res = await fetch(`${API_URL}/v1/features/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+  
+    if (!res.ok) throw new Error("Failed to update feature");
+    
+    const json = await res.json();
+    revalidatePath('/documents');
+    return json;
+  }
+  
+  export async function deleteFeatureAction(id: number) {
+    const token = await getToken();
+    if (!token) throw new Error("Unauthorized");
+  
+    const res = await fetch(`${API_URL}/v1/features/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  
+    if (!res.ok) throw new Error("Failed to delete feature");
+    
+    revalidatePath('/documents');
   }

@@ -94,7 +94,7 @@ export function TaskDialog({ open, onOpenChange, onSubmit, initialData, title = 
               value={taskTitle}
               onChange={(e) => setTaskTitle(e.target.value)}
               placeholder="What needs to be done?"
-              className="w-full px-3 py-2 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:outline-none"
+              className="w-full px-3 py-2 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:outline-none text-foreground dark:text-white"
             />
           </div>
           <div className="space-y-2">
@@ -104,7 +104,7 @@ export function TaskDialog({ open, onOpenChange, onSubmit, initialData, title = 
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Add more details..."
               rows={3}
-              className="w-full px-3 py-2 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:outline-none resize-none"
+              className="w-full px-3 py-2 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:outline-none resize-none text-foreground dark:text-white"
             />
           </div>
           <div className="space-y-2">
@@ -136,7 +136,7 @@ export function TaskDialog({ open, onOpenChange, onSubmit, initialData, title = 
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="w-full px-3 py-2 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:outline-none text-sm"
+                className="w-full px-3 py-2 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:outline-none text-sm text-foreground dark:text-white"
               />
             </div>
             <div className="space-y-2">
@@ -147,7 +147,7 @@ export function TaskDialog({ open, onOpenChange, onSubmit, initialData, title = 
                 type="date"
                 value={dueDate}
                 onChange={(e) => setDueDate(e.target.value)}
-                className="w-full px-3 py-2 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:outline-none text-sm"
+                className="w-full px-3 py-2 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:outline-none text-sm text-foreground dark:text-white"
               />
             </div>
           </div>
@@ -161,7 +161,7 @@ export function TaskDialog({ open, onOpenChange, onSubmit, initialData, title = 
               value={estimatedTime || ""}
               onChange={(e) => setEstimatedTime(e.target.value ? parseInt(e.target.value) : undefined)}
               placeholder="e.g., 60"
-              className="w-full px-3 py-2 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:outline-none"
+              className="w-full px-3 py-2 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:outline-none text-foreground dark:text-white"
             />
           </div>
           <div className="space-y-2">
@@ -173,7 +173,7 @@ export function TaskDialog({ open, onOpenChange, onSubmit, initialData, title = 
               value={tags}
               onChange={(e) => setTags(e.target.value)}
               placeholder="e.g., frontend, bug, urgent"
-              className="w-full px-3 py-2 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:outline-none"
+              className="w-full px-3 py-2 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:outline-none text-foreground dark:text-white"
             />
           </div>
           <Button 

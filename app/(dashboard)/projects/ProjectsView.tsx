@@ -178,7 +178,7 @@ export default function ProjectsView({ initialProjects }: ProjectsViewProps) {
                   value={newProjectTitle}
                   onChange={(e) => setNewProjectTitle(e.target.value)}
                   placeholder="e.g., Website Redesign"
-                  className="w-full px-4 py-3 bg-gray-50 border-2 border-transparent focus:border-primary/50 focus:bg-white rounded-xl focus:outline-none transition-all font-medium"
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border-2 border-transparent focus:border-primary/50 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:outline-none transition-all font-medium text-foreground dark:text-white"
                 />
               </div>
               <div className="space-y-2">
@@ -189,7 +189,7 @@ export default function ProjectsView({ initialProjects }: ProjectsViewProps) {
                   onChange={(e) => setNewProjectDescription(e.target.value)}
                   placeholder="Brief description of the project"
                   rows={3}
-                  className="w-full px-4 py-3 bg-gray-50 border-2 border-transparent focus:border-primary/50 focus:bg-white rounded-xl focus:outline-none resize-none transition-all font-medium"
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border-2 border-transparent focus:border-primary/50 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:outline-none resize-none transition-all font-medium text-foreground dark:text-white"
                 />
               </div>
               <Button 
@@ -257,7 +257,7 @@ export default function ProjectsView({ initialProjects }: ProjectsViewProps) {
                 placeholder="Search projects by title..." 
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-primary/20 rounded-full py-4 pl-12 text-base font-medium placeholder:text-muted-foreground transition-all"
+                className="w-full bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-primary/20 rounded-full py-4 pl-12 text-base font-medium placeholder:text-muted-foreground transition-all text-foreground dark:text-white"
             />
         </div>
         <div className="h-8 w-px bg-border" />

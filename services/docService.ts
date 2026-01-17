@@ -12,6 +12,7 @@ export interface Document {
   isFavorite: boolean;
   createdAt: string;
   updatedAt: string;
+  featureId?: number | null;
 }
 
 export interface CreateDocumentRequest {
