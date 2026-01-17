@@ -26,7 +26,7 @@ export function DocumentsToolbar({
     <div className="clay-card !rounded-[2rem] p-4 flex flex-col sm:flex-row items-center gap-4 bg-white dark:bg-card">
       <Tabs 
         value={viewMode} 
-        onValueChange={(v) => setViewMode(v as any)} 
+        onValueChange={(v: string) => setViewMode(v as "files" | "folders")} 
         className="w-full sm:w-auto"
       >
         <TabsList className="grid w-full grid-cols-2 rounded-xl h-12 p-1">
