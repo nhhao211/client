@@ -7,19 +7,25 @@ import "./globals.css";
 const fredoka = Fredoka({
   variable: "--font-heading",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap", // Prevent FOIT - improves LCP
+  preload: true,
 });
 
 const nunito = Nunito({
   variable: "--font-body",
   subsets: ["latin"],
-  weight: ["200", "300", "400", "500", "600", "700", "800", "900"],
+  weight: ["400", "500", "600", "700"], // Reduced weights to only used ones
+  display: "swap",
+  preload: true,
 });
 
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-mono",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500"],
+  display: "swap",
+  preload: false, // Not critical for initial render
 });
 
 export const metadata: Metadata = {

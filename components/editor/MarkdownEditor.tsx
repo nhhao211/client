@@ -5,8 +5,11 @@ import Editor, { OnMount, OnChange } from "@monaco-editor/react";
 import { useTheme } from "next-themes";
 import { Loader2 } from "lucide-react";
 import { toast } from "@/lib/toast";
-import SlashCommandMenu from "./SlashCommandMenu";
-import { AiDiagramDialog } from "./AiDiagramDialog";
+import dynamic from "next/dynamic";
+
+// Lazy load modals/menus - only loaded on interaction
+const SlashCommandMenu = dynamic(() => import("./SlashCommandMenu"), { ssr: false });
+const AiDiagramDialog = dynamic(() => import("./AiDiagramDialog").then(mod => mod.AiDiagramDialog), { ssr: false });
 
 interface MarkdownEditorProps {
   value: string;
@@ -43,14 +46,14 @@ export function MarkdownEditor({
     editor.focus();
 
     // Add keydown listener to close menu on Escape or space (if menu open)
-    editor.onKeyDown((e) => {
+    editor.onKeyDown((e: any) => {
       if (e.code === "Escape") {
         setSlashMenuPosition(null);
       }
     });
 
     // Detect cursor position change to close menu if moved away from '/'
-    editor.onDidChangeCursorPosition((e) => {
+    editor.onDidChangeCursorPosition((e: any) => {
        // Optional: Add logic here if you want stricter control
     });
   };

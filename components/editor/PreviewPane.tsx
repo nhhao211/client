@@ -6,7 +6,17 @@ import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import rehypeRaw from "rehype-raw";
 import { cn } from "@/lib/utils";
-import Mermaid from "./Mermaid";
+import dynamic from "next/dynamic";
+
+// Lazy load Mermaid (~380KB) - only when diagram exists
+const Mermaid = dynamic(() => import("./Mermaid"), {
+  loading: () => (
+    <div className="flex justify-center my-6 p-4 bg-muted/50 rounded-lg animate-pulse">
+      <span className="text-muted-foreground text-sm">Loading diagram...</span>
+    </div>
+  ),
+  ssr: false,
+});
 
 interface PreviewPaneProps {
   content: string;
@@ -138,12 +148,15 @@ export function PreviewPane({ content, className = "" }: PreviewPaneProps) {
             ),
             // Custom horizontal rule
             hr: () => <hr className="my-6 border-border" />,
-            // Custom image
+            // Custom image with CLS optimization
             img: ({ src, alt }) => (
               <img
                 src={src}
                 alt={alt || ""}
+                loading="lazy"
+                decoding="async"
                 className="rounded-lg border border-border my-4 max-w-full h-auto"
+                style={{ aspectRatio: "auto" }}
               />
             ),
           }}

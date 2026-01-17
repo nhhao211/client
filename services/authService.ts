@@ -44,6 +44,17 @@ export async function login(token: string): Promise<LoginResponse> {
 }
 
 /**
+ * Admin Login
+ */
+export async function adminLogin(username: string, password: string): Promise<LoginResponse> {
+  const response = await apiClient.post<LoginResponse>(
+    "/v1/auth/admin-login",
+    { username, password }
+  );
+  return response.data;
+}
+
+/**
  * Get current user profile
  */
 export async function getProfile(): Promise<UserProfile> {

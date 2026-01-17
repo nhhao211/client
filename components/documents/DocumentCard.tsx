@@ -2,7 +2,7 @@
 
 import { Document } from "@/services/docService";
 import { GlassCard } from "@/components/ui/glass-card";
-import { FileText, MoreVertical, Calendar, Clock, Star, Trash2 } from "lucide-react";
+import { FileText, MoreVertical, Calendar, Clock, Star, Trash2, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -13,28 +13,64 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { DocumentPreviewTooltip } from "@/components/documents/DocumentPreviewTooltip";
+
 
 interface DocumentCardProps {
   doc: Document;
   onDelete?: (id: number) => void;
   onToggleFavorite?: (id: number) => void;
+  selected?: boolean;
+  onSelect?: (id: number) => void;
+  selectionMode?: boolean;
 }
 
-export function DocumentCard({ doc, onDelete, onToggleFavorite }: DocumentCardProps) {
+export function DocumentCard({ doc, onDelete, onToggleFavorite, selected, onSelect, selectionMode }: DocumentCardProps) {
   return (
-    <DocumentPreviewTooltip docId={doc.id} initialContent={doc.content}>
+    /* Tooltip removed for performance */
       <Link href={`/editor/${doc.id}`} passHref className="block h-full">
-        <GlassCard className="h-full flex flex-col justify-between group cursor-pointer !rounded-[2.5rem] hover:scale-[1.02] transition-transform duration-300 bg-white dark:bg-card">
-          <div className="space-y-4">
+        <GlassCard className={cn(
+            "h-full flex flex-col justify-between group cursor-pointer !rounded-[2.5rem] transition-all duration-300 bg-white dark:bg-card relative overflow-hidden",
+            selected ? "ring-2 ring-primary bg-primary/5 scale-[1.02]" : "hover:scale-[1.02]"
+        )}>
+          {/* Selection Overlay for click handling when in selection mode */}
+          {selectionMode && (
+              <div 
+                className="absolute inset-0 z-10"
+                onClick={(e) => {
+                    e.preventDefault();
+                    onSelect?.(doc.id);
+                }}
+              />
+          )}
+
+          <div className="space-y-4 relative z-20">
             <div className="flex items-start justify-between">
-              <div className={cn(
-                  "p-3 rounded-full transition-colors shadow-sm",
-                  doc.isFavorite 
-                      ? "bg-amber-100 text-amber-500" 
-                      : "bg-blue-50 text-blue-500 group-hover:bg-blue-100"
-              )}>
-                {doc.isFavorite ? <Star className="w-5 h-5 fill-current" /> : <FileText className="w-5 h-5" />}
+              <div className="flex items-center gap-3">
+                {/* Checkbox */}
+                 <div 
+                    onClick={(e) => { 
+                        e.preventDefault();
+                        e.stopPropagation(); 
+                        onSelect?.(doc.id); 
+                    }}
+                    className={cn(
+                        "flex items-center justify-center w-6 h-6 rounded-lg border-2 transition-all cursor-pointer",
+                        selected 
+                        ? "bg-primary border-primary text-white shadow-md scale-110" 
+                        : "border-muted-foreground/30 hover:border-primary/50 bg-white/50 dark:bg-black/20"
+                    )}
+                >
+                    {selected && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                </div>
+
+                <div className={cn(
+                    "p-3 rounded-full transition-colors shadow-sm",
+                    doc.isFavorite 
+                        ? "bg-amber-100 text-amber-500" 
+                        : "bg-blue-50 text-blue-500 group-hover:bg-blue-100"
+                )}>
+                    {doc.isFavorite ? <Star className="w-5 h-5 fill-current" /> : <FileText className="w-5 h-5" />}
+                </div>
               </div>
               
               <DropdownMenu>
@@ -77,7 +113,7 @@ export function DocumentCard({ doc, onDelete, onToggleFavorite }: DocumentCardPr
             </div>
           </div>
 
-          <div className="mt-4 pt-4 border-t border-dashed border-gray-100 dark:border-gray-700 flex items-center justify-between text-xs font-bold text-muted-foreground/70">
+          <div className="mt-4 pt-4 border-t border-dashed border-gray-100 dark:border-gray-700 flex items-center justify-between text-xs font-bold text-muted-foreground/70 relative z-20">
               <div className="flex items-center gap-1.5 bg-gray-50 dark:bg-gray-800 px-3 py-1.5 rounded-full">
                   <Calendar className="w-3.5 h-3.5" />
                   <span>{new Date(doc.createdAt).toLocaleDateString()}</span>
@@ -85,6 +121,5 @@ export function DocumentCard({ doc, onDelete, onToggleFavorite }: DocumentCardPr
           </div>
         </GlassCard>
       </Link>
-    </DocumentPreviewTooltip>
   );
 }

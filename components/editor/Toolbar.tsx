@@ -34,6 +34,8 @@ interface ToolbarProps {
   isFormatting?: boolean;
   isSaving?: boolean;
   isModified?: boolean;
+  isAutoSaveEnabled?: boolean;
+  onToggleAutoSave?: () => void;
 }
 
 const formatButtons = [
@@ -55,6 +57,8 @@ export function Toolbar({
   isFormatting = false,
   isSaving = false,
   isModified = false,
+  isAutoSaveEnabled = true,
+  onToggleAutoSave,
 }: ToolbarProps) {
   const [copied, setCopied] = useState(false);
 
@@ -176,6 +180,33 @@ export function Toolbar({
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
+
+        {/* Auto-save Toggle */}
+        {onToggleAutoSave && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className={`gap-2 cursor-pointer ${
+                  isAutoSaveEnabled ? "text-emerald-500" : "text-muted-foreground"
+                }`}
+                onClick={onToggleAutoSave}
+              >
+                <span className="text-xs font-bold hidden sm:inline">
+                  {isAutoSaveEnabled ? "Auto-save ON" : "Auto-save OFF"}
+                </span>
+                <Save className={`h-4 w-4 ${isAutoSaveEnabled ? "fill-current" : ""}`} />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{isAutoSaveEnabled ? "Disable auto-save" : "Enable auto-save"}</p>
+            </TooltipContent>
+          </Tooltip>
+        )}
+
+
+        <Separator orientation="vertical" className="mx-1 h-6" />
     </div>
   );
 }

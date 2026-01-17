@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 import * as authService from "@/services/authService";
+import { createSession, deleteSession } from "@/app/actions";
 
 interface User {
   id?: number;
@@ -40,6 +41,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } catch (error) {
           console.error("Failed to load profile:", error);
           authService.logout();
+          await deleteSession(); // Ensure cookie is clear
         }
       }
       setIsLoading(false);
@@ -51,6 +53,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (token: string) => {
     try {
       authService.setAuthToken(token);
+      await createSession(token); // Set server-side cookie
+      
       const result = await authService.login(token);
       const userData = result.data.user;
       setUser({
@@ -62,13 +66,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       console.error("Login failed:", error);
       authService.logout();
+      await deleteSession();
       throw error;
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
     // Clear local state and token
     authService.logout();
+    await deleteSession(); // Clear server-side cookie
     setUser(null);
     
     // Optionally, revoke Google session

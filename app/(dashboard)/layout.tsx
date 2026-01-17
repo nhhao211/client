@@ -1,4 +1,4 @@
-import { Sidebar, ProtectedRoute, Header } from "@/components/common";
+import { Sidebar, Header } from "@/components/common";
 
 export default function DashboardLayout({
   children,
@@ -6,7 +6,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ProtectedRoute>
+    <>
       <div className="min-h-screen bg-background">
         {/* Sidebar - hidden on mobile, shown on desktop */}
         <div className="hidden lg:block">
@@ -21,6 +21,6 @@ export default function DashboardLayout({
           </div>
         </main>
       </div>
-    </ProtectedRoute>
+    </>
   );
 }

@@ -31,6 +31,10 @@ interface DocState {
   
   // Create new document
   createNewDoc: () => void;
+
+  // Auto-save
+  isAutoSaveEnabled: boolean;
+  toggleAutoSave: () => void;
 }
 
 const defaultContent = `# Welcome to MarkFlow AI
@@ -63,6 +67,9 @@ export const useDocStore = create<DocState>((set, get) => ({
   isModified: false,
   isLoading: false,
   isSaving: false,
+  isAutoSaveEnabled: true,
+
+  toggleAutoSave: () => set((state) => ({ isAutoSaveEnabled: !state.isAutoSaveEnabled })),
 
   setCurrentDoc: (doc) => {
     set({
@@ -107,6 +114,7 @@ export const useDocStore = create<DocState>((set, get) => ({
       isModified: false,
       isLoading: false,
       isSaving: false,
+      isAutoSaveEnabled: true,
     });
   },
 
