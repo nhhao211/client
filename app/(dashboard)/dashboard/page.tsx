@@ -15,7 +15,7 @@ export default async function DashboardPage() {
     return <DashboardView initialDocuments={documents} />;
   } catch (error: any) {
     if (error.message === "Unauthorized") {
-      redirect("/login");
+      redirect("/logout");
     }
     throw error; // Let error.tsx handle other errors
   }

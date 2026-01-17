@@ -4,7 +4,7 @@ import type { NextRequest } from "next/server";
 const protectedRoutes = ["/dashboard", "/documents", "/projects", "/editor", "/settings"];
 const authRoutes = ["/login", "/register"];
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const token = request.cookies.get("authToken")?.value;
   const { pathname } = request.nextUrl;
 
@@ -13,7 +13,7 @@ export function middleware(request: NextRequest) {
   
   if (isProtectedRoute && !token) {
     const response = NextResponse.redirect(new URL("/login", request.url));
-    response.cookies.delete("authToken"); // Clean up if invalid? No, just redirect.
+    // response.cookies.delete("authToken"); // Clean up if invalid? No, just redirect.
     return response;
   }
 

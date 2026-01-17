@@ -2,7 +2,10 @@
 
 import { Document } from "@/services/docService";
 import { GlassCard } from "@/components/ui/glass-card";
-import { FileText, MoreVertical, Calendar, Clock, Star, Trash2, Check, Folder } from "lucide-react";
+import { FileText, MoreVertical, Calendar, Clock, Star, Trash2, Check, Folder, Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useTransition } from "react";
+import { createPortal } from "react-dom";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -26,9 +29,24 @@ interface DocumentCardProps {
 }
 
 export function DocumentCard({ doc, onDelete, onToggleFavorite, selected, onSelect, selectionMode, onMove }: DocumentCardProps) {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+
+  const handleClick = (e: React.MouseEvent) => {
+    // If we're in selection mode, or holding cmd/ctrl for new tab, let default behavior happen
+    // (Selection mode is handled by the overlay, but safe to check here)
+    if (selectionMode || e.metaKey || e.ctrlKey) return;
+    
+    e.preventDefault();
+    startTransition(() => {
+      router.push(`/editor/${doc.id}`);
+    });
+  };
+
   return (
-    /* Tooltip removed for performance */
-      <Link href={`/editor/${doc.id}`} passHref className="block h-full">
+    <>
+      {/* Tooltip removed for performance */}
+      <Link href={`/editor/${doc.id}`} onClick={handleClick} className="block h-full">
         <GlassCard className={cn(
             "h-full flex flex-col justify-between group cursor-pointer !rounded-[2.5rem] transition-all duration-300 bg-white dark:bg-card relative overflow-hidden",
             selected ? "ring-2 ring-primary bg-primary/5 scale-[1.02]" : "hover:scale-[1.02]"
@@ -43,6 +61,8 @@ export function DocumentCard({ doc, onDelete, onToggleFavorite, selected, onSele
                 }}
               />
           )}
+
+
 
           <div className="space-y-4 relative z-20">
             <div className="flex items-start justify-between">
@@ -127,10 +147,25 @@ export function DocumentCard({ doc, onDelete, onToggleFavorite, selected, onSele
           <div className="mt-4 pt-4 border-t border-dashed border-gray-100 dark:border-gray-700 flex items-center justify-between text-xs font-bold text-muted-foreground/70 relative z-20">
               <div className="flex items-center gap-1.5 bg-gray-50 dark:bg-gray-800 px-3 py-1.5 rounded-full">
                   <Calendar className="w-3.5 h-3.5" />
-                  <span>{new Date(doc.createdAt).toLocaleDateString()}</span>
+                  <span>{new Date(doc.createdAt).toLocaleDateString('en-GB')}</span>
               </div>
           </div>
         </GlassCard>
       </Link>
+      {isPending && typeof document !== 'undefined' && createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white/10 dark:bg-black/20 backdrop-blur-sm animate-in fade-in duration-200">
+           <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-6 rounded-3xl shadow-2xl flex flex-col items-center gap-4 min-w-[200px] animate-in zoom-in-95 duration-200">
+               <div className="p-4 bg-primary/10 rounded-full">
+                 <Loader2 className="w-8 h-8 animate-spin text-primary" />
+               </div>
+               <div className="text-center space-y-1">
+                 <p className="font-semibold text-lg">Opening...</p>
+                 <p className="text-xs text-muted-foreground font-medium">Please wait a moment</p>
+               </div>
+           </div>
+        </div>,
+        document.body
+      )}
+    </>
   );
 }

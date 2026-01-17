@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, type ChangeEvent } from "react";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,7 +12,7 @@ interface CreateFeatureModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit: (data: { title: string; description: string }) => Promise<void>;
-  initialData?: { title: string; description: string } | null;
+  initialData?: { title: string; description?: string } | null;
 }
 
 export function CreateFeatureModal({ open, onOpenChange, onSubmit, initialData }: CreateFeatureModalProps) {
@@ -57,7 +57,7 @@ export function CreateFeatureModal({ open, onOpenChange, onSubmit, initialData }
             <Input
               id="title"
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
               placeholder="e.g. Authentication, Payment Module"
               autoFocus
             />
@@ -67,7 +67,7 @@ export function CreateFeatureModal({ open, onOpenChange, onSubmit, initialData }
             <Textarea
               id="description"
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)}
               placeholder="Brief description of this feature..."
             />
           </div>
