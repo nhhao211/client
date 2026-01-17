@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { ArrowLeft, PanelLeftClose, PanelLeft, Check, Cloud } from "lucide-react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Toolbar } from "@/components/editor";
 import dynamic from 'next/dynamic';
+import { Loader2 } from 'lucide-react';
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
+import { Document } from "@/services/docService";
+import { Toolbar, EditorHeader } from "@/components/editor";
+import { useEditorController } from "@/hooks/useEditorController";
 
 const PreviewPane = dynamic(
   () => import('@/components/editor/PreviewPane').then((mod) => mod.PreviewPane),
@@ -19,7 +19,6 @@ const PreviewPane = dynamic(
     ssr: false,
   }
 );
-import { Loader2 } from 'lucide-react';
 
 const MarkdownEditor = dynamic(
   () => import('@/components/editor/MarkdownEditor').then((mod) => mod.MarkdownEditor),
@@ -33,17 +32,6 @@ const MarkdownEditor = dynamic(
     ssr: false,
   }
 );
-import { ThemeToggle } from "@/components/common";
-import { useDocStore } from "@/store";
-import { useAutoSave } from "@/hooks";
-import { formatMarkdown } from "@/lib/markdown";
-import { toast } from "@/lib/toast";
-import * as docService from "@/services/docService"; // Keep for export for now or move to action if possible
-import { createDocumentAction, updateDocumentAction } from "@/app/serverActions";
-import { Document } from "@/services/docService";
-import * as aiService from "@/services/aiService";
-import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
 
 interface EditorViewProps {
   initialDoc?: Document; // Optional, null if new
@@ -51,9 +39,7 @@ interface EditorViewProps {
 }
 
 export default function EditorView({ initialDoc, isNew }: EditorViewProps) {
-  const router = useRouter();
-  const [showPreview, setShowPreview] = useState(true);
-  const [isFormatting, setIsFormatting] = useState(false);
+  const { state, actions } = useEditorController({ initialDoc, isNew });
 
   const {
     content,
@@ -61,236 +47,32 @@ export default function EditorView({ initialDoc, isNew }: EditorViewProps) {
     isModified,
     isSaving,
     isAutoSaveEnabled,
-    setContent,
-    setTitle,
-    setIsSaving,
-    markAsSaved,
-    createNewDoc,
-    setCurrentDoc,
-    setIsLoading,
-    toggleAutoSave,
-  } = useDocStore();
+    showPreview,
+    isFormatting,
+  } = state;
 
-  // Initialize document on mount
-  useEffect(() => {
-    const initDoc = async () => {
-      setIsLoading(true);
-      try {
-        if (isNew) {
-          createNewDoc();
-        } else if (initialDoc) {
-          setCurrentDoc({
-            id: initialDoc.id,
-            title: initialDoc.title,
-            content: initialDoc.content,
-            isFavorite: initialDoc.isFavorite,
-            status: initialDoc.status,
-            createdAt: new Date(initialDoc.createdAt),
-            updatedAt: new Date(initialDoc.updatedAt),
-          });
-        }
-      } catch (error) {
-        console.error("Failed to load document:", error);
-        createNewDoc();
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    initDoc();
-  }, [isNew, initialDoc, createNewDoc, setCurrentDoc, setIsLoading]);
-
-  // Auto-save hook
-  const triggerAutoSave = useAutoSave({
-    onSave: async () => {
-      if (!currentDoc || !isModified) return;
-
-      setIsSaving(true);
-      try {
-        if (typeof currentDoc.id === "string" && currentDoc.id.startsWith("temp-")) {
-          // Create new document on first save
-          const newDoc = await createDocumentAction({
-            title: currentDoc.title,
-            content,
-          });
-          setCurrentDoc({
-            ...currentDoc,
-            id: newDoc.id,
-          });
-          // Update URL without full reload
-          window.history.replaceState(null, "", `/editor/${newDoc.id}`);
-        } else {
-          // Update existing document
-          await updateDocumentAction(currentDoc.id, {
-            title: currentDoc.title,
-            content,
-          });
-        }
-        markAsSaved();
-      } catch (error) {
-        console.error("Auto-save failed:", error);
-      } finally {
-        setIsSaving(false);
-      }
-    },
-    delay: 2000,
-    enabled: isModified && currentDoc !== null && isAutoSaveEnabled,
-  });
-
-  // Trigger auto-save when content changes
-  useEffect(() => {
-    triggerAutoSave();
-  }, [content, triggerAutoSave]);
-
-  const handleFormat = () => {
-    const formatted = formatMarkdown(content);
-    setContent(formatted);
-  };
-
-  const handleMagicFormat = async () => {
-    if (!content.trim()) return;
-
-    setIsFormatting(true);
-    try {
-      // Call AI refine endpoint
-      const refined = await aiService.refine(content);
-      setContent(refined);
-      toast.success("Document formatted with AI!");
-    } catch (error) {
-      console.error("Magic format failed:", error);
-      toast.error("Failed to format document");
-    } finally {
-      setIsFormatting(false);
-    }
-  };
-
-  const handleSave = async () => {
-    if (!currentDoc || !isModified) return;
-
-    setIsSaving(true);
-    try {
-      if (typeof currentDoc.id === "string" && currentDoc.id.startsWith("temp-")) {
-        const newDoc = await createDocumentAction({
-          title: currentDoc.title,
-          content,
-        });
-        setCurrentDoc({
-          ...currentDoc,
-          id: newDoc.id,
-        });
-        window.history.replaceState(null, "", `/editor/${newDoc.id}`);
-        toast.success("Document created successfully");
-      } else {
-        await updateDocumentAction(currentDoc.id, {
-          title: currentDoc.title,
-          content,
-        });
-        toast.success("Document saved successfully");
-      }
-      markAsSaved();
-    } catch (error) {
-      console.error("Save failed:", error);
-      toast.error("Failed to save document");
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const handleExport = async () => {
-    if (!currentDoc) {
-      toast.error("No document to export");
-      return;
-    }
-
-    try {
-      toast.info("Exporting document...");
-      await docService.exportDocumentAsDocx(
-        currentDoc.id,
-        `${currentDoc.title || "document"}.docx`
-      );
-      toast.success("Document exported successfully");
-    } catch (error) {
-      console.error("Export failed:", error);
-      toast.error("Failed to export document");
-    }
-  };
-
-  const handleCopy = async () => {
-    await navigator.clipboard.writeText(content);
-  };
+  const {
+      setContent,
+      setTitle,
+      setShowPreview,
+      toggleAutoSave,
+      handleSave,
+      handleFormat,
+      handleMagicFormat,
+      handleExport,
+      handleCopy,
+  } = actions;
 
   return (
     <div className="flex h-screen flex-col bg-background/50 backdrop-blur-3xl">
-      {/* Editor Header */}
-      <header className="flex h-16 items-center justify-between border-b border-white/10 bg-white/60 dark:bg-black/40 backdrop-blur-xl px-4 sticky top-0 z-50 transition-all duration-300">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" asChild className="hover:bg-white/20 dark:hover:bg-white/10 transition-colors">
-            <Link href="/dashboard">
-              <ArrowLeft className="h-5 w-5" />
-              <span className="sr-only">Back to dashboard</span>
-            </Link>
-          </Button>
-          
-          <div className="h-6 w-px bg-white/20 dark:bg-white/10" />
-
-          {/* Document Title (Editable) */}
-          <div className="group relative">
-            <input
-                type="text"
-                value={currentDoc?.title || "Untitled"}
-                onChange={(e) => setTitle(e.target.value)}
-                className="bg-transparent text-lg font-bold font-heading outline-none focus:ring-0 rounded-lg px-2 py-1 w-64 md:w-96 transition-all hover:bg-white/20 dark:hover:bg-white/5 focus:bg-white/30 dark:focus:bg-white/10"
-                placeholder="Document title"
-            />
-          </div>
-
-          {/* Status Indicator */}
-          <div className="flex items-center gap-2 text-xs font-medium px-3 py-1.5 rounded-full bg-white/10 dark:bg-white/5 border border-white/10">
-             {isSaving ? (
-                <>
-                    <Cloud className="w-3 h-3 animate-bounce text-blue-500" />
-                    <span className="text-blue-500">Saving...</span>
-                </>
-             ) : isModified ? (
-                <>
-                    <div className="w-2 h-2 rounded-full bg-orange-500" />
-                    <span className="text-muted-foreground">Unsaved</span>
-                </>
-             ) : (
-                <>
-                    <Check className="w-3 h-3 text-emerald-500" />
-                    <span className="text-muted-foreground">Saved</span>
-                </>
-             )}
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          {/* Toggle Preview */}
-          <Button
-            variant="ghost"
-            size="sm"
-            className="hover:bg-white/20 dark:hover:bg-white/10 transition-colors text-muted-foreground hover:text-foreground"
-            onClick={() => setShowPreview(!showPreview)}
-          >
-            {showPreview ? (
-              <>
-                <PanelLeftClose className="h-4 w-4 mr-2" />
-                <span className="hidden sm:inline">Hide Preview</span>
-              </>
-            ) : (
-              <>
-                <PanelLeft className="h-4 w-4 mr-2" />
-                <span className="hidden sm:inline">Show Preview</span>
-              </>
-            )}
-          </Button>
-
-          <div className="h-6 w-px bg-white/20 dark:bg-white/10 mx-2" />
-
-          <ThemeToggle />
-        </div>
-      </header>
+      <EditorHeader
+        title={currentDoc?.title || "Untitled"}
+        onTitleChange={setTitle}
+        isSaving={isSaving}
+        isModified={isModified}
+        showPreview={showPreview}
+        onTogglePreview={() => setShowPreview(!showPreview)}
+      />
 
       {/* Toolbar */}
       <div className="border-b border-white/10 bg-white/40 dark:bg-black/20 backdrop-blur-md">
