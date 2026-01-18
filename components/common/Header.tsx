@@ -19,6 +19,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { ThemeToggle } from "./ThemeToggle";
+import { TetThemeToggle } from "@/components/tet/TetThemeToggle";
 import { Sidebar } from "./Sidebar";
 import { useAuth } from "@/components/providers/AuthProvider";
 
@@ -82,6 +83,9 @@ export function Header({ title = "Dashboard" }: HeaderProps) {
           <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-primary rounded-full ring-2 ring-background animate-pulse" />
           <span className="sr-only">Notifications</span>
         </Button>
+
+        {/* Tet Theme Toggle */}
+        <TetThemeToggle />
 
         {/* Theme Toggle */}
         <ThemeToggle />

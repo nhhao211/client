@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Fredoka, Nunito, JetBrains_Mono } from "next/font/google";
 import { ThemeProvider, AuthProvider, GoogleProvider } from "@/components/providers";
+import { TetThemeProvider } from "@/components/tet/TetThemeProvider";
 import { ToastContainer } from "@/components/ui/toast";
 import "./globals.css";
 
@@ -49,12 +50,14 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <GoogleProvider>
-          <AuthProvider>
-            {children}
-            <ToastContainer />
-          </AuthProvider>
-          </GoogleProvider>
+          <TetThemeProvider>
+            <GoogleProvider>
+            <AuthProvider>
+              {children}
+              <ToastContainer />
+            </AuthProvider>
+            </GoogleProvider>
+          </TetThemeProvider>
         </ThemeProvider>
       </body>
     </html>

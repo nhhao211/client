@@ -117,6 +117,91 @@
   --sidebar-ring: #ef5350;
 }
 
+/* Tet Theme - Lunar New Year Edition */
+/* Activate by adding .tet class to body or root element */
+.tet {
+  /* Warm Tet Background with subtle red tint */
+  --background: #fffbf5;
+  --foreground: #4a2c2a;
+
+  --card: #fff8f0;
+  --card-foreground: #4a2c2a;
+
+  --popover: #fff8f0;
+  --popover-foreground: #4a2c2a;
+
+  /* Lucky Red as Primary */
+  --primary: #dc2626;
+  --primary-foreground: #ffffff;
+
+  /* Gold/Yellow as Secondary */
+  --secondary: #fef3c7;
+  --secondary-foreground: #92400e;
+
+  --muted: #fef3c7;
+  --muted-foreground: #b45309;
+
+  /* Accent - Deep Gold */
+  --accent: #f59e0b;
+  --accent-foreground: #ffffff;
+
+  --destructive: #b91c1c;
+  --destructive-foreground: #ffffff;
+
+  --border: #fcd34d;
+  --input: #fde68a;
+  --ring: #dc2626;
+
+  --sidebar: #fef3c7;
+  --sidebar-foreground: #4a2c2a;
+  --sidebar-primary: #dc2626;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #fde68a;
+  --sidebar-accent-foreground: #92400e;
+  --sidebar-border: #fcd34d;
+  --sidebar-ring: #dc2626;
+}
+
+/* Dark Tet Theme */
+.dark.tet {
+  --background: #1c0a0a;
+  --foreground: #fef2f2;
+
+  --card: #2a1010;
+  --card-foreground: #fef2f2;
+
+  --popover: #2a1010;
+  --popover-foreground: #fef2f2;
+
+  --primary: #ef4444;
+  --primary-foreground: #ffffff;
+
+  --secondary: #451a03;
+  --secondary-foreground: #fde68a;
+
+  --muted: #3b1010;
+  --muted-foreground: #fca5a5;
+
+  --accent: #d97706;
+  --accent-foreground: #ffffff;
+
+  --destructive: #991b1b;
+  --destructive-foreground: #ffffff;
+
+  --border: #7f1d1d;
+  --input: #7f1d1d;
+  --ring: #ef4444;
+
+  --sidebar: #1a0808;
+  --sidebar-foreground: #fef2f2;
+  --sidebar-primary: #ef4444;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #451a03;
+  --sidebar-accent-foreground: #fde68a;
+  --sidebar-border: #7f1d1d;
+  --sidebar-ring: #ef4444;
+}
+
 /* Enhanced Claymorphism Utilities */
 @layer utilities {
   .clay-card {
@@ -145,8 +230,8 @@
 
   .clay-card:hover {
     transform: translateY(-2px);
-    box-shadow: 
-      0 10px 15px -3px rgba(0, 0, 0, 0.1), 
+    box-shadow:
+      0 10px 15px -3px rgba(0, 0, 0, 0.1),
       0 4px 6px -2px rgba(0, 0, 0, 0.05);
   }
 
@@ -240,4 +325,32 @@
 .animate-gradient {
   background-size: 200% 200%;
   animation: gradient 8s ease infinite;
+}
+
+@keyframes swing {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(3deg);
+  }
+}
+
+@keyframes swing-slow {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(-2deg);
+  }
+}
+
+.animate-swing {
+  animation: swing 3s ease-in-out infinite;
+}
+
+.animate-swing-slow {
+  animation: swing-slow 5s ease-in-out infinite;
 }
